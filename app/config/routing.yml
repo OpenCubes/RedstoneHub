@@ -1,0 +1,4 @@
+rs_hub_marketplace:
+    resource: "@RSHubMarketplaceBundle/Resources/config/routing.yml"
+    prefix:   /
+

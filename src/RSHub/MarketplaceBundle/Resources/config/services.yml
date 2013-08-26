@@ -1,0 +1,7 @@
+parameters:
+#    rs_hub_marketplace.example.class: RSHub\MarketplaceBundle\Example
+
+services:
+#    rs_hub_marketplace.example:
+#        class: %rs_hub_marketplace.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
