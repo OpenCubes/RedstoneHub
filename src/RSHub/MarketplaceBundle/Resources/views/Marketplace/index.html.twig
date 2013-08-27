@@ -1,0 +1,29 @@
+{% extends 'RSHubMarketplaceBundle::layout.html.twig' %} {% block
+sidebar %}
+<ul>
+
+	{% for category in categories %}
+	<li>{{ category.name }}</li> {% else %}
+	<li>No category yet !</li> {% endfor %}
+
+</ul>
+
+{% endblock %}
+{% block content %}
+<ul>
+	{% for item in mods %}
+	<li><table>
+			<tr>
+				<td rowspan="3"><img alt="icon" src="{{ item.icon }}"></td>
+				<td colspan="2"><h3>{{ item.name }}</h3></td>
+			</tr>
+			<tr>
+				<td>{{ item.summary }}</td>
+				<td rowspan="2">Download</td>
+			</tr>
+			<tr>
+				<td>more demo 1,500,365</td>
+			</tr>
+		</table></li> {% else %}
+	<li>There is no mods yet</li> {% endfor %}
+</ul> {% endblock %}

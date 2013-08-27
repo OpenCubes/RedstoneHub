@@ -2,61 +2,49 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <meta charset="UTF-8">
-        <!--[if IE]><meta http-equiv="X-UA-Compatible"
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible"
          content="IE=edge"><![endif]-->
-        <title>{% block title %}RedstoneHub{% endblock %}</title>
-        <meta name="viewport" content="initial-scale=1.0">
-        <!--[if lt IE 9]>
+<title>{% block title %}RedstoneHub{% endblock %}</title>
+<meta name="viewport" content="initial-scale=1.0">
+<!--[if lt IE 9]>
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        <link rel="stylesheet" href="css/knacss.css" media="all">
-        <link rel="stylesheet" href="css/styles.css" media="all">
+<link rel="stylesheet" href="{{ asset('css/knacss.css') }}" media="all">
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}" media="all">
 
-    {% block stylesheets %}
-     <!--<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" type="text/css" />-->
-    {% endblock %}
-    </head>
+{% block stylesheets %}
+<!--<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}" type="text/css" />-->
+{% endblock %}
+</head>
 
-    <body>
-        <div class="container">
-            <header id="header" role="banner" class="line pam">
-                <a href="" id="h_title">RedstoneHub</a>
-            </header>
-            <aside class="mod left w20 mrs pam aside">
-                <nav id="navigation" role="navigation">
+<body>
+	<div class="container">
+		<header id="header" role="banner" class="line pam">
+			<a href="" id="h_title">RedstoneHub</a>
+		</header>
+		<aside class="mod left w20 mrs pam aside">
+			<nav id="navigation" role="navigation">{% block sidebar %} {%
+				endblock %}</nav>
+			<div id="content" class="span9">{% block body %} {% endblock %}</div>
+	
+	</div>
 
-                    <ul class="pas">
-                            {% for article in articles %}
+	<div id="main" role="main" class="mod pam">{% block content %} {%
+		endblock %}</div>
 
-                                {% endfor %}
-                            <li> </li>
+	</div>
+	<footer id="footer" role="contentinfo" class="line w100 pas txtcenter">
+		(c) CraftYourMod Corporation 2013. All rights reserved. </footer>
+	{% block javascripts %} {# Ajoutez ces lignes JavaScript si vous
+	comptez vous servir des fonctionnalit s du bootstrap Twitter #}
+	<script
+		src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
+	{% endblock %}
 
-                                {% else %}
-                        </ul>
-
-                    </nav>
-                    <div id="content" class="span9">
-          {% block body %}
-          {% endblock %}
-                        </div>
-                </div>
-
-                <hr>
-
-
-            </div>
-            <footer id="footer" role="contentinfo" class="line w100 pas txtcenter">
-                (c) CraftYourMod Corporation 2013. All rights reserved.
-            </footer>
-  {% block javascripts %}
-    {# Ajoutez ces lignes JavaScript si vous comptez vous servir des fonctionnalit s du bootstrap Twitter #}
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-            <script type="text/javascript" src="{{ asset('js/bootstrap.js') }}"></script>
-  {% endblock %}
-
-        </body>
-    </html>
+</body>
+</html>

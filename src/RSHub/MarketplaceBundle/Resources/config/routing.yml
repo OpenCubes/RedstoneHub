@@ -1,3 +1,7 @@
 rs_hub_marketplace_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: RSHubMarketplaceBundle:Marketplace:index }
+    pattern:  /
+    defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:index" }
+
+rs_hub_marketplace_add:
+    pattern:  /add
+    defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:add" }
