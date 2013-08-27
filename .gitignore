@@ -16,8 +16,5 @@ app/config/parameters.yml
 # Komodo
 *.komodoproject
 .komodotools/*
-<<<<<<< HEAD
-
 composer.phar
-=======
->>>>>>> 172226a8ac8592290d7933a8647cf10fb4bb43a5
+/nbproject/private/
