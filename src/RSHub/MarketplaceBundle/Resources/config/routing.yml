@@ -5,3 +5,9 @@ rs_hub_marketplace_homepage:
 rs_hub_marketplace_add:
     pattern:  /add
     defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:add" }
+
+rs_hub_marketplace_view:
+   pattern: /{id}
+   defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:view" }
+   requirements:
+        id:  \d+

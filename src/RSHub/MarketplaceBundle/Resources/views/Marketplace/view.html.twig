@@ -1,0 +1,23 @@
+{% extends 'RSHubMarketplaceBundle::layout.html.twig' %} {% block
+sidebar %}
+<ul>
+
+	<li>{{ mod.downloads|number_format }} downloads</li>
+	<li>{{ mod.stars|number_format }} stars</li>
+	
+	<li><br /></li>
+	<li>
+    <a href="{{ mod.downloadlink }}" class="">Download Now</a> </li>
+    <li><a href="">online demo</a>
+	
+</ul>
+
+{% endblock %}
+{% block content %}
+		<h2>{{ mod.name }}</h2>
+		<p>{{ mod.description }}</p>
+   
+
+			
+		</table></li>
+	</ul> {% endblock %}

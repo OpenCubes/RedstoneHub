@@ -16,32 +16,25 @@ sidebar %}
 		<table>
 			<tr>
 				<td rowspan="3" class="mod_icon"><img class="mod_icon" alt="icon" src="{{ item.icon }}"></td>
-				<td colspan="2"><h3>{{ item.name }}</h3></td>
+				<td colspan="2"><h3><span class="mtitle">{{ item.name }}</span> <span class="mversion"> v{{ item.version }}</span> <span class="mauthor"> by {{ item.author }}</span></h3></td>
 			</tr>
 			<tr>
 				<td class="sum">{{ item.summary }}</td>
-				<td class="download" rowspan="2"><a href="#" class="a-btn">
-    <span class="a-btn-symbol">i</span>
-    <span class="a-btn-text">Download Now</span> 
-    <span class="a-btn-slide-text">{{ item.downloads|number_format }}</span>
-    <span class="a-btn-slide-icon"></span>
-</a>
-{# 				<a href="{{ item.downloadLink }}"#}
-{# 					class="download"> <span class="dllabel">Download</span>#}
-{# 					<span#}
-{# 						class="dlcount">{{ item.downloads|number_format }}</span>#}
-{# 				</a>>#}</td
+				<td class="download" rowspan="2"><a href="#" class="download">
+				<span class="icn">&</span>
+				<span>Download</span>
+				<span class="dlcount">{{ item.downloads|number_format }}</span></td>
 			</tr>
 			<tr>
 				<td>
 					<ul class="mod_links">
 						<li>
-							<a href="">more</a>
+							<a href="{{ path('rs_hub_marketplace_view', {'id': item.id}) }}">more</a>
 						</li>
 						<li>
 							<a href="">online demo</a>
 							<li>
-								<a href="" class="star"><img src="{{ asset('images/star.png') }}" />{{ item.stars|number_format }}</a>
+								<a href="" class="star"><span class="icn">s</span>{{ item.stars|number_format }}</a>
 							</li>
 						</li>
 					</ul>

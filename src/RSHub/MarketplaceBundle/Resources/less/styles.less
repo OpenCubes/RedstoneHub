@@ -7,16 +7,39 @@
 @deepdark: #2a2b30;
 @mainfont: Ubuntu;
 @size: 18px;
-
 @import "style.css";
 @import "elements.less";
-
 @import url(http://fonts.googleapis.com/css?family=Ubuntu:400,300,700,700italic,400italic);
+@font-face {
+	font-family: 'icomoon';
+	src: url('../../fonts/iconset1.eot');
+	src: url('../../fonts/iconset1.eot?#iefix') format('embedded-opentype'), url('../../fonts/iconset1.woff') format('woff'), url('../../fonts/iconset1.ttf') format('truetype'), url('../../fonts/iconset1.svg#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 // Classes
-.animate (@transition: opacity , @duration: 500ms) {
-	transition: @transition @duration;
-	-moz-transition: @transition @duration;
-	-webkit-transition: @transition @duration;
+.animate (@property: background , @transition: ease , @duration: 500ms) {
+	-webkit-transition: @property @duration @transition;
+	-moz-transition: @property @duration @transition;
+	-ms-transition: @property @duration @transition;
+	-o-transition: @property @duration @transition;
+	transition: @property @duration @transition;
+}
+
+.insetshadow (@hlength: 5px , @vlength: 5px , @blur: 5px , @spread: 5px , @color: rgba(0, 0, 0, 0.5)) {
+	-webkit-box-shadow: inset @hlength @vlength @blur @spread @color;
+	box-shadow: inset @hlength @vlength @blur @spread @color;
+}
+
+.outsetshadow (@hlength: 5px , @vlength: 5px , @blur: 5px , @spread: 5px , @color: rgba(0, 0, 0, 0.5)) {
+	-webkit-box-shadow: @hlength @vlength @blur @spread @color;
+	box-shadow: @hlengthx @vlength @blur @spread @color;
+}
+
+.textshadow (@x:0px, @y:0px, @blur:5px, @color:#000) {
+	text-shadow: @x @y @blur @color;
+	filter: dropshadow(color=@color, offx=@x, offy=@y);
 }
 
 .radius (@radius: 5px) {
@@ -46,7 +69,9 @@ label {
 
 // ==========ITEMS IN MP==============
 table , td , tr {
-	border-style: none;
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
 .item , .item_list {
@@ -57,6 +82,7 @@ table , td , tr {
 	display: inline-block;
 	list-style-image: none;
 	padding-left: 5px;
+	height: 20px;
 }
 
 img.mod_icon {
@@ -71,168 +97,70 @@ td.mod_icon {
 }
 
 td.sum {
-	width: auto;
+	width: 330;
+	height: 60px;
 }
 
-// DOWNLOAD
-/* 
 td.download {
-	width: 140px;
-	overflow: hidden;
-	display: inline-block;
+	width: 220px;
+	max-width: 220px;
 	white-space: nowrap;
+	vertical-align: bottom;
+	height: 100%;
 }
-*/
+
 a.download {
 	font-size: @size;
 	text-decoration: none;
 	color: @light;
 	background-color: @deepdark;
-	border-radius: 15px;
-	width: 126px;
+	border-radius: 30px;
+	width: 206px;
 	padding: 5px 30px 5px 30px;
 	display: block;
 	text-align: center;
-	.animate (opacity , 500ms);
+	vertical-align: bottom;
+	height: 100%;
+	.insetshadow (2px , 2px , 0 , 0 , rgba(0, 0, 0, 0.3));
+	.animate (color , ease , 500ms);
+	.animate (background , ease , 500ms);
 	span {
 		background-color: @deepdark;
 		display: block;
 		text-align: center;
+		.animate (color , ease , 500ms);
+		.animate (background , ease , 500ms);
 	}
 
 	.dlcount {
 		font-size: @size - 3;
+		text-align: center;
+	}
+
+	.icn {
+		color: @background;
+		float: left;
+		font-size: 32px;
+		font-weight: normal;
 	}
 }
 
 a.download:hover {
-	background-color: @light;
+	background-color: @dark;
 	text-shadow: 0px 0px 5px #000;
 	box-shadow: inset 0px 0px 5px 0px #000;
-	color: @deepdark;
+	color: @light;
 	text-align: center;
+	.textshadow();
 	span {
-		background-color: @light;
+		background-color: @dark;
 		display: block;
 		text-align: center;
 	}
 }
 
-@font-face{
-    font-family: 'WebSymbolsRegular';
-    src: url('../../websymbols/websymbols-regular-webfont.eot');
-    src: url('../../websymbols/websymbols-regular-webfont.eot?#iefix') format('embedded-opentype'),
-        url('../../websymbols/websymbols-regular-webfont.woff') format('woff'),
-        url('../../websymbols/websymbols-regular-webfont.ttf') format('truetype'),
-        url('../../websymbols/websymbols-regular-webfont.svg#WebSymbolsRegular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-.a-btn{
-    -webkit-border-radius:50px;
-    -moz-border-radius:50px;
-    border-radius:50px;
-    padding:10px 30px 10px 70px;
-    position:relative;
-    float:left;
-    display:block;
-    overflow:hidden;
-    margin:10px;
-    background:#fff;
-    background:-webkit-gradient(linear,left top,left bottom,color-stop(rgba(255,255,255,1),0),color-stop(rgba(246,246,246,1),0.74),color-stop(rgba(237,237,237,1),1));
-    background:-webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(246,246,246,1) 74%, rgba(237,237,237,1) 100%);
-    background:-moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(246,246,246,1) 74%, rgba(237,237,237,1) 100%);
-    background:-o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(246,246,246,1) 74%, rgba(237,237,237,1) 100%);
-    background:linear-gradient(top, rgba(255,255,255,1) 0%, rgba(246,246,246,1) 74%, rgba(237,237,237,1) 100%);
-    filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 );
-    -webkit-box-shadow:0px 0px 7px rgba(0,0,0,0.2), 0px 0px 0px 1px rgba(188,188,188,0.1);
-    -moz-box-shadow:0px 0px 7px rgba(0,0,0,0.2), 0px 0px 0px 1px rgba(188,188,188,0.1);
-    box-shadow:0px 0px 7px rgba(0,0,0,0.2), 0px 0px 0px 1px rgba(188,188,188,0.1);
-    -webkit-transition:box-shadow 0.3s ease-in-out;
-    -moz-transition:box-shadow 0.3s ease-in-out;
-    -o-transition:box-shadow 0.3s ease-in-out;
-    transition:box-shadow 0.3s ease-in-out;
-}
-.a-btn-symbol{
-    font-family:'WebSymbolsRegular', cursive;
-    color:#555;
-    font-size:20px;
-    text-shadow:1px 1px 2px rgba(255,255,255,0.5);
-    position:absolute;
-    left:20px;
-    line-height:32px;
-    -webkit-transition:opacity 0.3s ease-in-out;
-    -moz-transition:opacity 0.3s ease-in-out;
-    -o-transition:opacity 0.3s ease-in-out;
-    transition:opacity 0.3s ease-in-out;
-}
-.a-btn-text{
-    font-size:20px;
-    color:@deepdark;
-    line-height:16px;
-    font-weight:bold;
-    text-shadow:1px 1px 2px rgba(255,255,255,0.5);
-    display:block;
+.icn {
+	font-family: icomoon;
 	text-decoration: none;
 }
-.a-btn-slide-text{
-    font-size:10px;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    color:@dark;
-    text-shadow:0px 1px 1px rgba(255,255,255,0.9);
-	text-decoration: none;
-    text-align: center;
-}
-.a-btn-slide-icon{
-    position:absolute;
-    top:-30px;
-    width:22px;
-    height:22px;
-    background:transparent url(../../images/arrow_down_black.png) no-repeat top left;
-    left:20px;
-    opacity:0.4;
-}
-.a-btn:hover{
-    background:#fff;
-    -webkit-box-shadow:0px 0px 9px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(188,188,188,0.1);
-    -moz-box-shadow:0px 0px 9px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(188,188,188,0.1);
-    box-shadow:0px 0px 9px rgba(0,0,0,0.4), 0px 0px 0px 1px rgba(188,188,188,0.1);
-}
-.a-btn:hover .a-btn-symbol{
-    opacity:0;
-}
-.a-btn:hover .a-btn-slide-icon{
-    -webkit-animation:slideDown 0.9s linear infinite;
-    -moz-animation:slideDown 0.9s linear infinite;
-    animation:slideDown 0.9s linear infinite;
-}
-.a-btn:active{
-    background: @dark;
-    -webkit-box-shadow:0px 2px 2px rgba(0,0,0,0.6) inset, 0px 0px 0px 1px rgba(188,188,188,0.1);
-    -moz-box-shadow:0px 2px 2px rgba(0,0,0,0.6) inset, 0px 0px 0px 1px rgba(188,188,188,0.1);
-    box-shadow:0px 2px 2px rgba(0,0,0,0.6) inset, 0px 0px 0px 1px rgba(188,188,188,0.1);
-}
-.a-btn:active .a-btn-text{
-    color: @light;
-    text-shadow:0px 1px 1px rgba(0,0,0,0.3);
-}
-.a-btn:active .a-btn-slide-text{
-    color:rgba(0,0,0,0.4);
-    text-shadow:none;
-}
-@keyframes slideDown{
-    0% { top: -30px; }
-    100% { top: 80px;}
-}
-@-webkit-keyframes slideDown{
-    0% { top: -30px; }
-    100% { top: 80px;}
-}
-@-moz-keyframes slideDown{
-    0% { top: -30px; }
-    100% { top: 80px;}
-}
-
 

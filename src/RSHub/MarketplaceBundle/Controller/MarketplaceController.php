@@ -18,9 +18,9 @@ class MarketplaceController extends Controller {
 												'RSHubMarketplaceBundle:Modification')
 										->findAll()));
 	}
-	public function viewAction(Modification mod){
+	public function viewAction(Modification $m){
 		return $this->render(
-				'RSHubMarketplaceBundle:Marketplace:view.html.twig', array('mod', $mod));
+				'RSHubMarketplaceBundle:Marketplace:view.html.twig', array('mod' => $m));
 	}
 	public function addAction() {
 		$mod = new Modification();
