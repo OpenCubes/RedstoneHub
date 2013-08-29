@@ -8,19 +8,17 @@
 /* ----------------------------- */
 
 /* base font-size corresponds to 10px and is adapted to rem unit */
+
+
+/* font-sizing for content */
+/* preserves vertical-rythm, thanks to http://soqr.fr/vertical-rhythm/ */
 html {
 	font-size: 62.5%;
 }
 body {
-	background-color: #fff;
-	color: #000;
-	font-family: helvetica, arial, sans-serif;
 	font-size: 1.4em; /* equiv 14px */
 	line-height: 1.5; /* adapt to your design */
 }
-
-/* font-sizing for content */
-/* preserves vertical-rythm, thanks to http://soqr.fr/vertical-rhythm/ */
 p,
 ul,
 ol,

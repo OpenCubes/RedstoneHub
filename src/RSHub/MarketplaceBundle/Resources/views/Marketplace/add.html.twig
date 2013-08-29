@@ -1,0 +1,18 @@
+
+{% extends "RSHubMarketplaceBundle::layout.html.twig" %}
+
+{% block title %}
+  Add a mod- {{ parent() }}
+{% endblock %}
+
+{% block content %}
+
+  <h2>Add a mod</h2>
+
+  {% include "RSHubMarketplaceBundle:Marketplace:form.html.twig" %}
+
+  <p>
+    You are adding a new mod
+  </p>
+
+{% endblock %}

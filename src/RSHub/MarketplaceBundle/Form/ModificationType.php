@@ -16,10 +16,10 @@ class ModificationType extends AbstractType {
 		$builder->add('name', 'text')
 				->add('author', 'text')
 				->add('summary', 'text')
-				->add('description', 'textaera')
+				->add('description', 'textarea')
 				->add('icon', 'url')
-				->add('downloads', 'int')
-				->add('stars', 'int')
+				->add('downloads', 'integer')
+				->add('stars', 'integer')
 				->add('version', 'text')
 				->add('downloadLink', 'text');
 	}

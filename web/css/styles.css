@@ -1,1 +1,87 @@
-/* Votre Style */
+@import
+url(http://fonts.googleapis.com/css?family=Ubuntu:400,300,700,700italic,400italic);
+
+
+// =========GENERAL STYLE=============
+
+html {
+    color: #000;
+    font-family: Ubuntu;
+}
+* {
+    color: #000;
+    font-family: Ubuntu;
+
+}
+aside {
+    color: #000;
+    font-family: Ubuntu;
+}
+
+// =========GENERAL FORMS=============
+
+label
+{
+    display: block;
+    width: 150px;
+    float: left;
+}
+
+
+// ==========ITEMS IN MP==============
+table {
+    border-style: none;
+}
+td {
+    border-style: none;
+}
+tr {
+    border-style: none;
+}
+.item
+{
+    list-style-image: none;
+}
+
+.item_list
+{
+    list-style-type: none;
+
+}
+
+.mod_links li
+{
+    display: inline-block;
+    list-style-image: none;
+    padding-left: 5px;
+}
+
+img.mod_icon 
+{
+    width: 78px;
+    height: 78px;
+}
+
+td.mod_icon
+{
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    width: 94px;
+}
+
+.download 
+{
+    border-radius: 15px;
+    padding: 5px 30px 5px 30px;
+    color: White;
+    text-decoration: none;
+    font-size: 18px;
+    background-color: Black;
+}
+.download:hover { 
+    background-color: Grey;
+    transition-property: fade;
+    transition-duration: 500ms;
+    text-shadow: 0px 0px 5px #000;
+    box-shadow: inset 0px 0px 5px 0px #000;
+}

@@ -6,23 +6,25 @@ namespace RSHub\MarketplaceBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use RSHub\MarketplaceBundle\Entity\Modification;
+use RSHub\MarketplaceBundle\Form\ModificationType;
 
 class MarketplaceController extends Controller {
 	public function indexAction() {
-		$mod = new Modification();
-		$mod->setName('TooManyItems')
-				->setIcon(
-						'http://www.minecraftforum.net/uploads/profile/photo-1727786.png?_r=1351513511')
-				->setSummary('Tired ? me too');
-
 		return $this->render(
 						'RSHubMarketplaceBundle:Marketplace:index.html.twig',
 						array('categories' => array(),
-								'mods' => array($mod, $mod)));
+								'mods' => $this->getDoctrine()
+										->getRepository(
+												'RSHubMarketplaceBundle:Modification')
+										->findAll()));
+	}
+	public function viewAction(Modification mod){
+		return $this->render(
+				'RSHubMarketplaceBundle:Marketplace:view.html.twig', array('mod', $mod));
 	}
 	public function addAction() {
 		$mod = new Modification();
-		$form = $this->createFormBuilder(Modification(), $mod);
+		$form = $this->createForm(new ModificationType(), $mod);
 		$request = $this->get('request');
 		if ($request->getMethod() == 'POST') {
 			$form->bind($request);
@@ -33,11 +35,14 @@ class MarketplaceController extends Controller {
 				$em->persist($mod);
 				$em->flush();
 
-				return $this->redirect($this->generateUrl(''));
+				return $this->redirect(
+								$this->generateUrl(
+												'rs_hub_marketplace_homepage'));
 			}
 		}
 
-		return $this->render('RSHub:MarketplaceBundle:add.html.twig',
+		return $this->render(
+						'RSHubMarketplaceBundle:Marketplace:add.html.twig',
 						array('form' => $form->createView(),));
 
 	}

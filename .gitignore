@@ -21,3 +21,8 @@ composer.phar
 /vendor
 /nbproject
 /Text-1.txt
+/.project
+/.buildpath
+/.externalToolBuilders
+/.komodotools
+/.settings

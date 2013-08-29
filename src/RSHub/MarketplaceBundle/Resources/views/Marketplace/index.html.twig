@@ -10,20 +10,43 @@ sidebar %}
 
 {% endblock %}
 {% block content %}
-<ul>
+<ul class="item_list">
 	{% for item in mods %}
-	<li><table>
+	<li class="item">
+		<table>
 			<tr>
-				<td rowspan="3"><img alt="icon" src="{{ item.icon }}"></td>
+				<td rowspan="3" class="mod_icon"><img class="mod_icon" alt="icon" src="{{ item.icon }}"></td>
 				<td colspan="2"><h3>{{ item.name }}</h3></td>
 			</tr>
 			<tr>
-				<td>{{ item.summary }}</td>
-				<td rowspan="2">Download</td>
+				<td class="sum">{{ item.summary }}</td>
+				<td class="download" rowspan="2"><a href="#" class="a-btn">
+    <span class="a-btn-symbol">i</span>
+    <span class="a-btn-text">Download Now</span> 
+    <span class="a-btn-slide-text">{{ item.downloads|number_format }}</span>
+    <span class="a-btn-slide-icon"></span>
+</a>
+{# 				<a href="{{ item.downloadLink }}"#}
+{# 					class="download"> <span class="dllabel">Download</span>#}
+{# 					<span#}
+{# 						class="dlcount">{{ item.downloads|number_format }}</span>#}
+{# 				</a>>#}</td
 			</tr>
 			<tr>
-				<td>more demo 1,500,365</td>
+				<td>
+					<ul class="mod_links">
+						<li>
+							<a href="">more</a>
+						</li>
+						<li>
+							<a href="">online demo</a>
+							<li>
+								<a href="" class="star"><img src="{{ asset('images/star.png') }}" />{{ item.stars|number_format }}</a>
+							</li>
+						</li>
+					</ul>
+				</td>
 			</tr>
 		</table></li> {% else %}
-	<li>There is no mods yet</li> {% endfor %}
-</ul> {% endblock %}
+		<li>There is no mods yet</li> {% endfor %}
+	</ul> {% endblock %}
