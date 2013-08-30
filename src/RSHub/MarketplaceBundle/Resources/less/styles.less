@@ -37,9 +37,8 @@
 	box-shadow: @hlengthx @vlength @blur @spread @color;
 }
 
-.textshadow (@x:0px, @y:0px, @blur:5px, @color:#000) {
+.textshadow (@x: 0px , @y: 0px , @blur: 5px , @color: #000) {
 	text-shadow: @x @y @blur @color;
-	filter: dropshadow(color=@color, offx=@x, offy=@y);
 }
 
 .radius (@radius: 5px) {
@@ -65,6 +64,22 @@ label {
 	display: block;
 	width: 150px;
 	float: left;
+}
+
+// TAG SIDEBAR
+ul.tags {
+	list-style-type: none;
+	a {
+		text-decoration: none;
+	}
+
+	ul {
+		list-style-type: none;
+	}
+}
+
+.crt_tag {
+	font-weight: bold;
 }
 
 // ==========ITEMS IN MP==============
@@ -151,7 +166,7 @@ a.download:hover {
 	box-shadow: inset 0px 0px 5px 0px #000;
 	color: @light;
 	text-align: center;
-	.textshadow();
+	.textshadow ();
 	span {
 		background-color: @dark;
 		display: block;

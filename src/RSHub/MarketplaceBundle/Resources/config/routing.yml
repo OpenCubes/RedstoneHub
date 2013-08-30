@@ -1,13 +1,20 @@
 rs_hub_marketplace_homepage:
     pattern:  /
-    defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:index" }
-
+    defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:index"}
+        
 rs_hub_marketplace_add:
     pattern:  /add
     defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:add" }
-
+   
 rs_hub_marketplace_view:
    pattern: /{id}
    defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:view" }
    requirements:
         id:  \d+
+ 
+rs_hub_marketplace_tag:
+   pattern: /tag/{tag}/{sort}
+   defaults: { _controller: "RSHubMarketplaceBundle:Marketplace:tag", tag: 'all' , sort: newest }
+   requirements:
+        tag:  ^[a-zA-Z]+$
+        sort: newest|downloads|popularity|name

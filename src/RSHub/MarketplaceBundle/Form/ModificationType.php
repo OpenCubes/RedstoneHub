@@ -21,7 +21,11 @@ class ModificationType extends AbstractType {
 				->add('downloads', 'integer')
 				->add('stars', 'integer')
 				->add('version', 'text')
-				->add('downloadLink', 'text');
+				->add('downloadLink', 'text')
+				->add('categories', 'entity',
+						array('class' => 'RSHubMarketplaceBundle:Category',
+								'property' => 'name', 'multiple' => true,
+								'expanded' => false));
 	}
 
 	/**
@@ -30,7 +34,7 @@ class ModificationType extends AbstractType {
 	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver) {
 		$resolver->setDefaults(
-						array(  
+						array(
 								'data_class' => 'RSHub\MarketplaceBundle\Entity\Modification'));
 	}
 

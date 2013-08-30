@@ -1,13 +1,21 @@
 {% extends 'RSHubMarketplaceBundle::layout.html.twig' %} {% block
 sidebar %}
-<ul>
-
-	{% for category in categories %}
-	<li>{{ category.name }}</li> {% else %}
+<ul class="tags">
+<li><a href="{{ path('rs_hub_marketplace_homepage') }}" class="tag alltag"><h6>All</h6></a></li>
+	<ul>
+	{% for c in categories %}
+	<li><a href="{{ path('rs_hub_marketplace_tag', {'tag': c.name })}}" class="tag{% if tag != '' and tag != 'all' and tag.id == c.id %} crt_tag {% endif %}">{{ c.name }}</a></li> {% else %}
 	<li>No category yet !</li> {% endfor %}
-
 </ul>
-
+<li><h6> Sort by</li>
+<ul>
+	<li><a href="{{ path('rs_hub_marketplace_tag', {'tag': tagname, 'sort': 'popularity' }) }}">Popularity</a></li>
+	<li><a href="{{ path('rs_hub_marketplace_tag', {'tag': tagname, 'sort': 'downloads'  }) }}">Downloads</a></li>
+	<li><a href="{{ path('rs_hub_marketplace_tag', {'tag': tagname, 'sort': 'name'       }) }}">Name</a></li>
+<li><a href="{{ path('rs_hub_marketplace_tag', {'tag': tagname, 'sort': 'newest'     }) }}" >Newest</a></li>
+	
+	</ul>
+</ul>
 {% endblock %}
 {% block content %}
 <ul class="item_list">
