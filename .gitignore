@@ -1,28 +1,11 @@
-# Bootstrap
-app/bootstrap*
-
-# Symfony directories
-vendor/*
-*/logs/*
-*/cache/*
-web/uploads/*
-web/bundles/*
-composer.lock
-
-# Configuration files
-app/config/parameters.ini
-app/config/parameters.yml
-
-# Komodo
-*.komodoproject
-.komodotools/*
+app/cache
+app/logs
+app/*.cache
+web/bundles
+web/uploads
+web/sitemap*.xml
+app/config/parameters*.yml
+vendor
+.idea
+nbproject
 composer.phar
-/nbproject/private/
-/vendor
-/nbproject
-/Text-1.txt
-/.project
-/.buildpath
-/.externalToolBuilders
-/.komodotools
-/.settings
