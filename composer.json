@@ -1,0 +1,78 @@
+{
+	"name" : "sonata-project/sandbox",
+	"description" : "Sonata Project's sandbox",
+	"license" : [
+		"MIT"
+	],
+	"require" : {
+		"willdurand/faker-bundle" : "~1.0",
+		"doctrine/doctrine-fixtures-bundle" : "2.1.*@dev",
+		"symfony-cmf/routing-bundle" : "1.1.*@dev",
+		"symfony/swiftmailer-bundle" : "~2.3",
+		"sonata-project/cache-bundle" : "~2.1",
+		"jms/security-extra-bundle" : "~1.5",
+		"doctrine/data-fixtures" : "1.0.*@dev",
+		"sonata-project/user-bundle" : "2.2.*@dev",
+		"doctrine/migrations" : "dev-master",
+		"sonata-project/notification-bundle" : "~2.2",
+		"knplabs/knp-menu-bundle" : "1.1.x-dev",
+		"sonata-project/page-bundle" : "~2.3",
+		"twig/extensions" : "~1.0",
+		"sonata-project/doctrine-extensions" : "~1",
+		"php" : ">=5.3.3",
+		"sonata-project/formatter-bundle" : "~2.3",
+		"knplabs/gaufrette" : "0.1.4",
+		"symfony/monolog-bundle" : "~2.3",
+		"sonata-project/seo-bundle" : "~1",
+		"sensio/distribution-bundle" : "~2.3",
+		"leafo/lessphp" : "dev-master",
+		"symfony/symfony" : "~2.3",
+		"sonata-project/doctrine-orm-admin-bundle" : "2.2.*@dev",
+		"sonata-project/easy-extends-bundle" : "~2.1",
+		"doctrine/doctrine-migrations-bundle" : "dev-master",
+		"knplabs/knp-markdown-bundle" : "1.2.*@dev",
+		"sonata-project/news-bundle" : "~2.3",
+		"sonata-project/media-bundle" : "2.2.*@dev",
+		"symfony/assetic-bundle" : "~2.3",
+		"symfony-cmf/routing" : "1.1.*@dev",
+		"twig/twig" : "~1.12",
+		"sonata-project/intl-bundle" : "~2.1",
+		"jms/di-extra-bundle" : "~1.4",
+		"simplethings/entity-audit-bundle" : "~0.5",
+		"sensio/generator-bundle" : "~2.3",
+		"dflydev/markdown" : "~1.0",
+		"sensio/framework-extra-bundle" : "~2.3",
+		"doctrine/doctrine-bundle" : "~1.2",
+		"sonata-project/block-bundle" : "~2.2"
+	},
+	"require-dev" : {
+		"guzzle/guzzle" : "~3.0"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"" : "src/"
+		}
+	},
+	"config" : {
+		"bin-dir" : "bin"
+	},
+	"scripts" : {
+		"post-update-cmd" : [
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+		],
+		"post-install-cmd" : [
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+		]
+	},
+	"extra" : {
+		"branch-alias" : {
+			"dev-master" : "2.3.x-dev"
+		}
+	}
+}
