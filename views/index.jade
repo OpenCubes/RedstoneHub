@@ -1,5 +1,28 @@
 extends layout
-
+block scripts
+  script(src="/javascripts/jquery.mixitup.min.js")
 block content
   h1= title
   p Welcome to #{title}
+  ul
+    li(class="filter", data-filter="cheats") Cheats
+    li(class="filter", data-filter="world") World
+  ul(id="Grid")
+    li(class="mix cheats", data-name="TooManyItems", data-version="1.6#1.5.63")
+      h1 TooManyItems
+      h4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque dignissim volutpat erat vitae volutpat. Nulla pretium metus non tellus vulputate, quis volutpat dui fermentum. Suspendisse nullam.
+
+    li(class="mix cheats", data-name="Zan Minimap", data-version="1.6#1.5.63", data-sumary="Hey u")
+      h1 ZanMinimap
+      h4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque dignissim volutpat erat vitae volutpat. Nulla pretium metus non tellus vulputate, quis volutpat dui fermentum. Suspendisse nullam.
+
+    li(class="mix cheats", data-name="Worldedit", data-version="1.6#1.5.63", data-sumary="Hey u")
+       h1 ZanMinimap
+       h4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque dignissim volutpat erat vitae volutpat. Nulla pretium metus non tellus vulputate, quis volutpat dui fermentum. Suspendisse nullam.
+
+    li(class="mix world", data-name="New biomes", data-version="1.6#1.5.63", data-sumary="Hey u")
+      h1 ZanMinimap
+      h4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque dignissim volutpat erat vitae volutpat. Nulla pretium metus non tellus vulputate, quis volutpat dui fermentum. Suspendisse nullam.
+
+
+</ul>
