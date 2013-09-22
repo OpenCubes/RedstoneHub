@@ -11,9 +11,7 @@ var express = require('express'),
 var app = express();
 var jade = require('jade');
 var mongoose = require('mongoose');
-var schemas = require('./app/schemas');
-var model = require('./app/model');
-
+var model = require('./app/mod');
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -34,38 +32,53 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
-
 app.get('/', function (req, res) {
     res.writeHead(200);
     var html = jade.renderFile('./views/index.jade');
+    res.write(html);
+    res.end();
+});
+
+app.get('/add', function (req, res) {
+    res.writeHead(200);
+    var html = jade.renderFile('./views/addmod.jade');
     console.log('Hey');
     res.write(html);
     res.end();
 });
-app.get('/getmods/:limit/:skip', function (req, res) {
-    var limit = req.params.limit;
-    var skip = req.params.skip;
-
-    mongoose.connect(config.db_connection, function (err) {
-        if (err) {
-            throw err;
-        }
+app.post('/ajax/addmod/', function (req, res) {
+    var enforce = require("enforce");
+    var checks = new enforce.Enforce({
+        returnAllErrors: true
     });
-    var ModModel = mongoose.model('mods', schemas.modScheme);
-    var query = model.ModModel.find(null);
-    res.writeHead(200, {
-        'Content-Type': 'text/plain'
-    });
-
-    query.exec(function (err, mods) {
-        if (err) {
-            throw err;
-        }
-        console.log('Retriveing mods...');
-        res.send(mods);
-    });
-    mongoose.connection.close();
+    checks.add("name", enforce.notEmptyString('Name invalid'))
+    .add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
+    .add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))
+    .add("summary", enforce.notEmptyString('Summary is invalid'));
+    res.send(req.body);
+    console.log(req.body);
     res.end();
+});
+app.get('/ajax/getmods/', function (req, res) {
+    var limit = req.param('limit');
+    var skip = req.param('skip');
+    var sort = req.param('sort');
+
+    var config = require('./config');
+
+    var mod = require('./app/mod');
+    var query = mod.find(null);
+    query.limit(limit).skip(skip).sort(sort);
+    // peut s'ecrire aussi query.where('pseudo', 'Atinux').limit(3);
+    query.exec(function (err, doc) {
+        if (err) {
+            throw err;
+        }
+        else {
+
+            res.send(doc);
+        }
+    });
 
 });
 /*

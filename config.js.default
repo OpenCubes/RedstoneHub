@@ -1,1 +1,6 @@
-var db_connection = "kind://username:password@host/database";
+exports.db_uri = "mongodb://host:port/db";
+exports.db_opt = {
+    'user': 'user',
+    'pass': 'password'
+};
+exports.version_regex = "((\\d.){2}\\d)#\\d.\\d((\\w|-|.|_)(\\d|\\w)+)(-?(ALPHA|BETA|DEV|UNSTABLE|STABLE|alpha|beta|dev|unstable|stable))?"
