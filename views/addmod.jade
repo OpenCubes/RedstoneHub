@@ -1,0 +1,31 @@
+extends layout
+block stylesheets
+  link(rel='stylesheet', href='/javascripts/markitup/skins/macosx/style.css')
+  link(rel='stylesheet', href='/javascripts/markitup/sets/markdown/style.css')
+  link(href='/stylesheets/jquery.motionCaptcha.0.2.css')
+block scripts
+  script(src="/javascripts/formToWizard.js")
+  script(type='text/javascript', src='/javascripts/markitup/jquery.markitup.js')
+  script(type='text/javascript', src='/javascripts/addform.js')
+  script(src='/javascripts/markdown.js')
+  script(src='/javascripts/jquery.motionCaptcha.0.2.js')
+
+
+block content
+  form(id="addform")
+    fieldset
+      legend General
+      label Name
+      input(type="text",name="name")
+      label Summary
+      input(type="textaera",name="sum")
+    fieldset
+      legend Description
+      label Description
+      textarea(id="markItUp",name="desc")
+    fieldset
+      legend Bot verification
+      #mc
+        p Please draw the shape in the box to submit the form:
+        canvas#mc-canvas
+      input(type='submit', value='Submit Form', id='submit')
