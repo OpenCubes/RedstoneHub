@@ -1,13 +1,4 @@
-miu = {
-    markdownTitle: function (markItUp, char) {
-        heading = '';
-        n = $.trim(markItUp.selection || markItUp.placeHolder).length;
-        for (i = 0; i < n; i++) {
-            heading += char;
-        }
-        return '\n' + heading + '\n';
-    }
-}
+
 $.fn.serializeObject = function () {
     var o = {};
     var a = this.serializeArray();
@@ -24,144 +15,70 @@ $.fn.serializeObject = function () {
     });
     return o;
 };
+var editor;
 $(document).ready(function () {
-
+    $(".input_container").parent().addClass("selected");
     $("#addform").formToWizard();
     $('#form-id').motionCaptcha();
     $("form").on("submit", function (event) {
         event.preventDefault();
-        console.log(JSON.stringify($('form').serializeObject()));
-
+        var opts = {
+            lines: 9, // The number of lines to draw
+            length: 0, // The length of each line
+            width: 15, // The line thickness
+            radius: 20, // The radius of the inner circle
+            corners: 1, // Corner roundness (0..1)
+            rotate: 90, // The rotation offset
+            direction: 1, // 1: clockwise, -1: counterclockwise
+            color: '#000', // #rgb or #rrggbb or array of colors
+            speed: 1, // Rounds per second
+            trail: 100, // Afterglow percentage
+            shadow: false, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 'auto', // Top position relative to parent in px
+            left: 'auto' // Left position relative to parent in px
+        };
+        var target = document.getElementById('loader');
+        var spinner = new Spinner(opts).spin(target);
+        var form = $('form').serializeObject()
+        form.desc = editor.exportFile();
+        console.log(form)
         $.ajax({
             url: '/ajax/addmod/',
             type: 'POST',
             data: {
-                form: JSON.stringify($('form').serializeObject())
+                form: JSON.stringify(form)
             },
             dataType: 'json',
             success: function (data) {
-                alert('Success!')
+                $('#loader').text('');
+                if (data) {
+                    $.each(data, function (i, v) {
+                        var e = $('[name="' + v.property + '"]');
+                        e.addClass('invalid');
+                    });
+                    setTimeout(function () {
+                        $.each(data, function (i, v) {
+                            var e = $('[name="' + v.property + '"]');
+                            e.removeClass('invalid');
+                        });
+                    }, 1000);
+                }
             },
             error: function (jqXHR, textStatus, err) {
                 alert('text status ' + textStatus + ', err ' + err)
             }
         })
     });
-    $("#markItUp").markItUp({
-        nameSpace: 'markdown',
-        previewAutoRefresh: true, // Useful to prevent multi-instances CSS conflict
-        previewParser: function (content) {
-            return markdown.toHTML(content);
+    $('textarea').autosize();
+    editor = new EpicEditor();
+    editor.load({
+        clientSideStorage: false,
+        file: {
+            defaultContent: 'The description should be written in markdown. To preview or switch to fullscrenn mod, go at the end of the area.: \n# This is a title'
         },
-
-        onShiftEnter: {
-            keepDefault: false,
-            openWith: '\n\n'
-        },
-        markupSet: [
-            {
-            name: 'First Level Heading',
-            key: "1",
-            placeHolder: 'Your title here...',
-            closeWith: function (markItUp) {
-                return miu.markdownTitle(markItUp, '=')
-            }
-        },
-            {
-            name: 'Second Level Heading',
-            key: "2",
-            placeHolder: 'Your title here...',
-            closeWith: function (markItUp) {
-                return miu.markdownTitle(markItUp, '-')
-            }
-        },
-            {
-            name: 'Heading 3',
-            key: "3",
-            openWith: '### ',
-            placeHolder: 'Your title here...'
-        },
-            {
-            name: 'Heading 4',
-            key: "4",
-            openWith: '#### ',
-            placeHolder: 'Your title here...'
-        },
-            {
-            name: 'Heading 5',
-            key: "5",
-            openWith: '##### ',
-            placeHolder: 'Your title here...'
-        },
-            {
-            name: 'Heading 6',
-            key: "6",
-            openWith: '###### ',
-            placeHolder: 'Your title here...'
-        },
-            {
-            separator: '---------------'
-        },
-            {
-            name: 'Bold',
-            key: "B",
-            openWith: '**',
-            closeWith: '**'
-        },
-            {
-            name: 'Italic',
-            key: "I",
-            openWith: '_',
-            closeWith: '_'
-        },
-            {
-            separator: '---------------'
-        },
-            {
-            name: 'Bulleted List',
-            openWith: '- '
-        },
-            {
-            name: 'Numeric List',
-            openWith: function (markItUp) {
-                return markItUp.line + '. ';
-            }
-        },
-            {
-            separator: '---------------'
-        },
-            {
-            name: 'Picture',
-            key: "P",
-            replaceWith: '![[![Alternative text]!]]([![Url:!:http://]!] "[![Title]!]")'
-        },
-            {
-            name: 'Link',
-            key: "L",
-            openWith: '[',
-            closeWith: ']([![Url:!:http://]!] "[![Title]!]")',
-            placeHolder: 'Your text to link here...'
-        },
-            {
-            separator: '---------------'
-        },
-            {
-            name: 'Quotes',
-            openWith: '> '
-        },
-            {
-            name: 'Code Block / Code',
-            openWith: '(!(\t|!|`)!)',
-            closeWith: '(!(`)!)'
-        },
-            {
-            separator: '---------------'
-        },
-            {
-            name: 'Preview',
-            call: 'preview',
-            className: "preview"
-        }
-        ]
+        autogrow: true
     });
 });

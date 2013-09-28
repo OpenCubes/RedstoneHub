@@ -2,6 +2,9 @@ extends layout
 block scripts
   script(src="/javascripts/jquery.mixitup.min.js")
   script(src="/javascripts/main.js")
+block navbar
+  li
+    a(href="/add") Add a new mod
 block content
   h1= title
   p Welcome to #{title}
