@@ -5,6 +5,13 @@ block scripts
 block navbar
   li
     a(href="/add") Add a new mod
+    if user
+      a Welcome #{user.username}
+      a(href="/logout") Logout
+    else
+      a(href="/register") Register
+      a(href="/login") Login
+
 block content
   h1= title
   p Welcome to #{title}
