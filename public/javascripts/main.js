@@ -8,7 +8,9 @@ var mods = $.ajax({
         var grid = $('#Grid');
         $.each(mods, function (i) {
             var mod = mods[i];
-            var li = $('<li data-name="' + mod.name + '" data-version="1.6#1.5.63" class="mix cheats mix_all"><h1>' + mod.name + '</h1><h4>Lum. Suspendisse nullam.</h4></li>').appendTo(grid);;
+            var li = $('<li data-name="' + mod.name + '" data-version="1.6#1.5.63" class="mix cheats mix_all">' +
+            '<img  class="mod_logo" src="'+ (mod.logo ? mod.logo : '')+'" />'
+            + '<h1>' + mod.name + '</h1><h6>'+mod.summary+'</h6></li>').appendTo(grid);;
         });
         $(function () {
 

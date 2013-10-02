@@ -18,8 +18,6 @@ $.fn.serializeObject = function () {
 var editor;
 $(document).ready(function () {
     $(".input_container").parent().addClass("selected");
-    $("#addform").formToWizard();
-    $('#form-id').motionCaptcha();
     $("form").on("submit", function (event) {
         event.preventDefault();
         var opts = {

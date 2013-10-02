@@ -3,21 +3,24 @@ block scripts
   script(src="/javascripts/jquery.mixitup.min.js")
   script(src="/javascripts/main.js")
 block navbar
-  li
-    a(href="/add") Add a new mod
+  div#main-nav
+    a(href="/add",data-icon="h") Home
+    a(href="/add",data-icon="O") Search
+    a(href="/add",data-icon="+") Add mod
+  div#user
     if user
-      a Welcome #{user.username}
+      a(data-icon="u") Welcome #{user.username}
       a(href="/logout") Logout
     else
-      a(href="/register") Register
+      a(href="/register", data-icon="u") Register
       a(href="/login") Login
 
+
 block content
-  h1= title
-  p Welcome to #{title}
-  ul
-    li(class="filter", data-filter="cheats") Cheats
-    li(class="filter", data-filter="world") World
+  aside
+    ul
+      li(class="filter", data-filter="cheats") Cheats
+      li(class="filter", data-filter="world") World
   div(id="loader")
     img(src="/images/preview.gif")
     #inTurnBlurringTextG
@@ -41,4 +44,5 @@ block content
         | .
       #inTurnBlurringTextG_10.inTurnBlurringTextG
         | .
-  ul(id="Grid")
+  #main
+    ul(id="Grid")
