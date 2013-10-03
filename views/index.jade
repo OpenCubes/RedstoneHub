@@ -1,7 +1,10 @@
 extends layout
 block scripts
   script(src="/javascripts/jquery.mixitup.min.js")
+  script(src="/javascripts/jquery.tooltipster.min.js")
   script(src="/javascripts/main.js")
+block stylesheets
+  link(rel='stylesheet', href='/stylesheets/tooltipster.css')
 block navbar
   div#main-nav
     a(href="/add",data-icon="h") Home
@@ -13,8 +16,7 @@ block navbar
       a(href="/logout") Logout
     else
       a(href="/register", data-icon="u") Register
-      a(href="/login") Login
-
+      a(href="/login", class="tooltip", title="", onclick="return false") Login
 
 block content
   aside

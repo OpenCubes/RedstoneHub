@@ -119,14 +119,17 @@ hr{
 	width: 100%;
 	height: 200px;
 	vertical-align: top;
-	margin-bottom: 20px;
-	background: #ccc;
-	color: #fff;
-
+	margin-bottom: 15px;
+	background: #ffffff;
+	color: #1a161a;
+	border-collapse: collapse;
+	border-top: dotted 1px #808080;
 	font-size: 30px;
-	text-align: center;
+	text-align: left;
 }
-
+.mix :first-child {
+	border-top: solid 0 #4a474a;    
+}
 #Grid .gap{
 	display: inline-block;
 	width: 200px;
