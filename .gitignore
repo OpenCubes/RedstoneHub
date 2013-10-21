@@ -36,7 +36,6 @@ local.properties
 .loadpath
 
 # Bower
-public/components
 
 # External tool builders
 .externalToolBuilders/
