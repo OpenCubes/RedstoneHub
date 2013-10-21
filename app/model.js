@@ -1,10 +1,11 @@
  var mongoose = require('mongoose'),
-     config = require('../config');
+     config = require('../config'),
+     Schema = mongoose.Schema;
  var db = mongoose.connect(config.db_uri, config.db_opt);
  if (!db) console.log('error while connecting');
  var modSchema = new mongoose.Schema({
 
-     _id: Object,
+     _id: Schema.Types.ObjectId,
      name: String,
      version: String,
      author_id: Object,
@@ -14,17 +15,37 @@
      dl_id: String,
      creation_date: Date,
      lmodified_date: Date,
-
+     category_id: {
+         type: Schema.Types.ObjectId,
+         ref: 'categories'
+     },
+     _stars_id: {
+         type: Schema.Types.ObjectId,
+         ref: 'stars'
+     },
 
  });
 
-
- var
-     passportLocalMongoose = require('passport-local-mongoose');
+ var categorySchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     name: String,
+     slug: String
+ });
+ var starSchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     
+     _user_id: {
+         type: Schema.Types.ObjectId,
+         ref: 'userauths'
+     }
+ });
+ var passportLocalMongoose = require('./local');
 
  var User = new mongoose.Schema({});
 
  User.plugin(passportLocalMongoose);
 
- exports.user = mongoose.model('userauths', User);
+ exports.user = db.model('userauths', User);
  exports.mod = db.model('mods', modSchema);
+ exports.stars = db.model('stars', starSchema);
+ exports.category = db.model('categories', categorySchema);

@@ -12,7 +12,8 @@ var express = require('express'),
     model = require('./app/model'),
     Mod = model.mod,
     User = model.user,
-    LocalStrategy = require("passport-local").Strategy;
+    Category = model.category,
+    Stars = model.stars;
 var lessMiddleware = require('less-middleware');
 
 var passport = require('passport');
@@ -63,11 +64,12 @@ if ('development' == app.get('env')) {
 }
 //
 // INDEX
-app.get('/', function (req, res) {
-    console.log('req'+req.user)
+app.get('/:var(browse|upload)?', function (req, res) {
+    console.log('req' + req.user)
     res.render('index', {
         user: req.user,
-        logged: (req.user ? true : false)
+        logged: (req.user ? true : false),
+        title: 'Homepage'
     });
 });
 // ADD MOD
@@ -104,23 +106,24 @@ app.get('/login', function (req, res) {
         user: req.user
     });
 });
+/*
+app.post('/login' , function (req, res) {
+    console.log("logging in...");
+    passport.authenticate('local');
+});*/
 
-app.post('/login', passport.authenticate('local'), function (req, res) {
-
+app.get('/ajax/logout', function (req, res) {
+    req.logout();
+    res.send('');
 });
-
 app.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
 });
 
-
-/*
-app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });*/
+app.post('/login', passport.authenticate('local', {}), function (req, res) {
+    res.send({user: req.user});
+});
 // AJAX
 
 // AJAX ROUTE FOR ADDING MOD
@@ -133,13 +136,14 @@ app.post('/ajax/addmod/', function (req, res) {
         desc = form.desc,
         version = form.version,
         logo = form.logo,
-        dl_link = form.dl_link;
+        dl_link = form.dl_link,
+        category = form.category;
 
     var checks = new enforce.Enforce({
         returnAllErrors: true
     });
     checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-    .add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid')).add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+    /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
     checks.check({
         name: name,
         sum: sum,
@@ -151,23 +155,36 @@ app.post('/ajax/addmod/', function (req, res) {
     },
 
     function (err) {
-        if (!err) {
-            var document = {
+        if (!err) {// find each person with a last name matching 'Ghost'
+        var query = Category.findOne({
+            'slug': category
+        });
+        console.log((category));
+        query.limit(1);
+        // execute the query at a later time
+        query.exec(function(err, cat) {
+            if (err) throw err;
+            
+            console.log((cat));
+             var document = {
                 name: name,
                 summary: sum,
                 description: desc,
                 version: version,
                 logo: logo,
                 dl_link: dl_link,
-                creation_date: Date.now()
+                creation_date: Date.now(),
+                category_id: cat._id
             };
             var doc = new Mod(document);
             doc.save(function (err) {
                 if (err) {
-                    throw err;
+                    return err;
                 }
                 res.send({});
             });
+        })
+           
         }
         else {
             console.log(err);
@@ -182,11 +199,26 @@ app.get('/ajax/getmods/', function (req, res) {
     var skip = req.param('skip');
     var sort = req.param('sort');
 
-    var config = require('./config');
 
     var query = Mod.find(null);
-    query.limit(limit).skip(skip).sort(sort);
-    // peut s'ecrire aussi query.where('pseudo', 'Atinux').limit(3);
+    query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id');
+    query.exec(function (err, doc) {
+        if (err) {
+            throw err;
+        }
+        else {
+            res.send(doc);
+        }
+    });
+
+});
+
+// AJAX ROUTE FOR VIEWING MOD
+app.get('/ajax/info/', function (req, res) {
+    var id = req.param('id');
+
+
+    var query = Mod.findOne({'_id': id}).populate('category_id');
     query.exec(function (err, doc) {
         if (err) {
             throw err;

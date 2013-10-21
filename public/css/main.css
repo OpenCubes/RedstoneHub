@@ -13,40 +13,7 @@
   font-style: normal;
 }
 [data-icon]:before {
-  font-family: 'icomoon';
   content: attr(data-icon);
-  speak: none;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding-right: 5px;
-  padding-left: 5px;
-}
-.icon-user,
-.icon-plus-alt,
-.icon-search,
-.icon-pencil,
-.icon-comment,
-.icon-cancel-circle,
-.icon-close,
-.icon-warning,
-.icon-github,
-.icon-facebook,
-.icon-box-add,
-.icon-box-remove,
-.icon-tags,
-.icon-tag,
-.icon-play,
-.icon-earth,
-.icon-star,
-.icon-star-2,
-.icon-list,
-.icon-feed,
-.icon-trashcan,
-.icon-image {
   font-family: 'icomoon';
   speak: none;
   font-style: normal;
@@ -54,7 +21,20 @@
   font-variant: normal;
   text-transform: none;
   line-height: 1;
+  /* Enable Ligatures ================ */
+
+  -webkit-font-feature-settings: "liga";
+  -moz-font-feature-settings: "liga=1";
+  -moz-font-feature-settings: "liga";
+  -ms-font-feature-settings: "liga" 1;
+  -o-font-feature-settings: "liga";
+  font-feature-settings: "liga";
+  /* Better Font Rendering =========== */
+
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 /* Use the following CSS code if you want to have a class per icon */
 html,
@@ -199,32 +179,126 @@ nav #menu div a:hover {
   float: right;
 }
 aside {
+  display: block;
   float: left;
   margin-top: 20px;
   height: 100px;
+  font-size: 16px;
+  color: White;
+}
+aside a {
+  display: block;
+}
+aside #upload-mod {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  -moz-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  text-align: center;
+  background-color: #333238;
+  color: White;
+  font-weight: bold;
+  -webkit-transition: background 500ms ease;
+  -moz-transition: background 500ms ease;
+  -ms-transition: background 500ms ease;
+  -o-transition: background 500ms ease;
+  transition: background 500ms ease;
+}
+aside #upload-mod:hover {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: all 250mx ease;
+  -moz-transition: all 250mx ease;
+  -ms-transition: all 250mx ease;
+  -o-transition: all 250mx ease;
+  transition: all 250mx ease;
+}
+aside #upload-mod:hover {
+  background-color: #7a7a82;
+  -webkit-transition: background 500ms ease;
+  -moz-transition: background 500ms ease;
+  -ms-transition: background 500ms ease;
+  -o-transition: background 500ms ease;
+  transition: background 500ms ease;
+}
+aside ul {
+  margin-top: 20px;
+  list-style: none;
+}
+aside ul li {
+  list-style: none;
+  margin-left: 20px;
+  cursor: pointer;
+}
+aside .current {
+  font-weight: bold;
 }
 #main {
   float: right;
-  width: 960px;
-  margin-top: 20px;
-  padding: 10px 10px;
+  width: 60%;
+  margin-top: 30px;
+  margin-right: 200px;
+  margin-bottom: 50px;
+  padding: 20px 20px;
+  background-color: #ffffff;
+  border: solid 1px #383a3d;
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  border: solid 1px #383a3d;
-  background-color: #ffffff;
   -moz-box-shadow: 3px 3px 14px #423d42;
   -webkit-box-shadow: 3px 3px 14px #423d42;
   box-shadow: 3px 3px 14px #423d42;
+  -webkit-transition: height 500ms ease;
+  -moz-transition: height 500ms ease;
+  -ms-transition: height 500ms ease;
+  -o-transition: height 500ms ease;
+  transition: height 500ms ease;
 }
-.mod_logo {
-  float: left;
-  height: 100%;
-  padding: 5px 5px 5px 5px;
+#epiceditor {
+  background-color: #292929;
 }
 #header {
   text-align: center;
   border-bottom: solid 1px #b2b3b5;
   margin: 0 0 20px 0;
+}
+.form-container {
+  margin-left: 20px;
+}
+.mix h1 {
+  color: #1a1a26;
+}
+.mix .modinfo {
+  margin-left: 100px;
+  color: #1a1a26;
+}
+.mix .mod_logo {
+  height: 75px;
+  position: absolute;
+  padding: 5px 5px 5px 5px;
+  margin: auto 0 auto 0;
+}
+.mix .summary {
+  position: relative;
+  font-size: 22px;
+  display: block;
+  overflow: hidden;
+  margin-bottom: 20px;
+  color: #1a1a26;
+}
+.mix .links {
+  font-size: 22px;
+  color: #4278ff;
+}
+.mix .links a {
+  color: #4278ff;
+}
+.mix .title {
+  font-size: 30px;
 }
 fieldset {
   border: none;
@@ -242,15 +316,68 @@ label {
   margin: 15px 0 5px;
 }
 input[type=text],
-input[type=password] {
+input[type=password],
+textarea {
   padding: 5px;
-  background-color: #ffffff;
-  border: solid 1px #33343b;
+  border-width: 0 0 3px 0;
+  border-color: #dad9eb;
   width: 175px;
+  outline: medium none;
+}
+input[type=text]:hover:not(:focus),
+input[type=password]:hover:not(:focus),
+textarea:hover:not(:focus) {
+  border-color: #ac9ac9;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -ms-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+input[type=text]:focus,
+input[type=password]:focus,
+textarea:focus {
+  border-color: #5854b8;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -ms-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+#legend {
+  margin-left: 0;
+  margin-top: 2px;
+  height: 100%;
+  padding: 4px;
+}
+#cat {
+  float: right;
+}
+.ladda-button {
+  display: block;
+  width: 35%;
+  margin: 30px auto 10px auto;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  box-shadow: 1px 2px rgba(0, 0, 0, 0.075) inset;
-  outline: medium none;
+  -webkit-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  -moz-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+}
+.ladda-button:hover {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: all 250mx ease;
+  -moz-transition: all 250mx ease;
+  -ms-transition: all 250mx ease;
+  -o-transition: all 250mx ease;
+  transition: all 250mx ease;
+}
+#send_bottom {
+  margin: 20px -20px -21px -20px;
+  border-radius: 0 0 10px 10px;
+  background-color: #93929e;
+  padding: 10px 10px 10px 10px;
 }
 input[type=submit] {
   margin-top: 10px;
@@ -259,12 +386,30 @@ input[type=submit] {
   border: solid 1px #1ba31b;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+  -webkit-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  -moz-box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
+  box-shadow: inset -3px -3px 0px rgba(0, 0, 0,0.2);
   font: Ubuntu;
-  text-shadow: 1px 1px 4px #000000;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   font-weight: bold;
 }
+input[type=submit]:hover {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  -webkit-transition: all 250mx ease;
+  -moz-transition: all 250mx ease;
+  -ms-transition: all 250mx ease;
+  -o-transition: all 250mx ease;
+  transition: all 250mx ease;
+}
 .invalid {
-  background-color: #ff0000;
+  border-color: #c74848;
+  -webkit-transition: all 500ms ease;
+  -moz-transition: all 500ms ease;
+  -ms-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
 }
 input {
   padding: 4px 12px;

@@ -35,6 +35,9 @@ local.properties
 .settings/
 .loadpath
 
+# Bower
+public/components
+
 # External tool builders
 .externalToolBuilders/
 

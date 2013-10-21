@@ -1,0 +1,35 @@
+{
+                    container: 'epiceditor',
+                    textarea: null,
+                    basePath: 'epiceditor',
+                    clientSideStorage: false,
+                    localStorageName: 'epiceditor',
+                    useNativeFullscreen: true,
+                    parser: markdown.toHTML,
+                    file: {
+                        name: 'epiceditor',
+                        defaultContent: '# This is a title\n\nThe description should be written in markdown. ' + '\nTo preview or switch to fullscreen mod, go at the end of the area (follow the arrow).\n**You should not put here changelog, downloads or features list. OpenKubes has a built-in manager for that.** \n\n##This is another title\n\n###...and subtitle\n\n' + '##  Code \n\n\nIndented with for spaces, it is a code\n\n     class HelloWorld {\n     public static void main(String[] args) {\n         System.out.println("Hello world!");\n     }' + '\n    }\n\n## Quotes\n\n\nYou can also do quoting by adding > at the beginning of the text\n' + '\n> Markdown is a lightweight markup language, originally created by John Gruber "allowing people ' + '\n to write using an easy-to-read, easy-to-write plain text format, then convert it to structurally valid XHTML (or HTML)"' + '\nsMarkdown formatted text should be readable as-is, without looking like it\'s been marked up with tags or formatting instructions, ' + 'unlike text which has been formatted with a Markup language, such as HTML, which has obvious tags and formatting instructions.' + ' Markdown is a formatting syntax for text that can be read by humans and can be easily converted to HTML.\n\n_(Wikipedia)_' + '\n\n## Format\n\n\nThere are mutliple format possibilities : \n\n - A list is marked with a \'-\' at the beginning\n - An ordered list with 1. or 2.\n' + ' - You can make the text **bold** by putting \'**\' at the beginning and at the end of the text\n - _Italic_ is also possible with \'_\'',
+                    },
+                    theme: {
+                        base: '/components/EpicEditor/epicditor/themes/base/epiceditor.css',
+                        preview: '/components/EpicEditor/epicditor/themes/preview/preview-dark.css',
+                        editor: '/components/EpicEditor/epicditor/themes/editor/epic-dark.css'
+                    },
+                    button: {
+                        preview: true,
+                        fullscreen: true,
+                        bar: "auto"
+                    },
+                    focusOnLoad: false,
+                    shortcut: {
+                        modifier: 18,
+                        fullscreen: 70,
+                        preview: 80
+                    },
+                    string: {
+                        togglePreview: 'Toggle Preview Mode',
+                        toggleEdit: 'Toggle Edit Mode',
+                        toggleFullscreen: 'Enter Fullscreen'
+                    },
+                    autogrow: true
+                }

@@ -1,0 +1,23 @@
+{
+  "name": "OpenKubes",
+  "version": "1.0.0",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "~2.0.3",
+    "sammy": "*",
+    "requirejs": "*",
+    "history.js": "*",
+    "EpicEditor": "~0.2.2",
+    "markdown": "~0.5.0",
+    "mixitup": "~1.5.4",
+    "qtip2": "*",
+    "jquery-autosize": "~1.17.8",
+    "Ladda": "*",
+    "jquery-dropkick2": "~1.0.0",
+    "haml": "https://github.com/creationix/haml-js.git#~0.2.5",
+    "jquery.browser": "~0.0.3"
+  }
+}

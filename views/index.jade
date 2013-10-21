@@ -1,50 +1,47 @@
 extends layout
 block scripts
-  script(src="/javascripts/jquery.mixitup.min.js")
-  script(src="/javascripts/jquery.tooltipster.min.js")
-  script(src="/javascripts/main.js")
+  // script(src="/components/mixitup/jquery.mixitup.min.js")
+  // script(src="/components/qtip2/jquery.qtip.min.js")
+  // script(src='/components/markdown/lib/markdown.js')
+  // script(src='/components/spin.js/dist/spin.min.js')
+  // script(src='/components/jquery-autosize/jquery.autosize.min.js')
+  // script(src='/components/history.js/scripts/bundled/html4+html5/jquery.history.js')
+  // script(src="/components/sammy/lib/sammy.js")
+  // script(src="/components/haml/lib/haml.js")
+  // script(src="/components/sammy/lib/plugins/sammy.haml.js")
+  script(src="/components/requirejs/require.js",  data-main="app/scripts/main.js")
+
 block stylesheets
-  link(rel='stylesheet', href='/stylesheets/tooltipster.css')
+  //link(rel='stylesheet', href='/stylesheets/ladda.min.css')
+  link(rel='stylesheet', href="/components/qtip2/jquery.qtip.min.css")
+
 block navbar
   div#main-nav
-    a(href="/add",data-icon="h") Home
+    a(href="/",data-icon="home") Home
     a(href="/add",data-icon="O") Search
-    a(href="/add",data-icon="+") Add mod
+    a(href="/upload",data-icon="upload") Add mod
   div#user
     if user
       a(data-icon="u") Welcome #{user.username}
-      a(href="/logout") Logout
+      a#logout(href="/logout", onclick="return false") Logout
     else
-      a(href="/register", data-icon="u") Register
+      a(href="/register", data-icon="user") Register
       a(href="/login", class="tooltip", title="", onclick="return false") Login
 
 block content
-  aside
-    ul
-      li(class="filter", data-filter="cheats") Cheats
-      li(class="filter", data-filter="world") World
   div(id="loader")
-    img(src="/images/preview.gif")
-    #inTurnBlurringTextG
-      #inTurnBlurringTextG_1.inTurnBlurringTextG
-        | L
-      #inTurnBlurringTextG_2.inTurnBlurringTextG
-        | o
-      #inTurnBlurringTextG_3.inTurnBlurringTextG
-        | a
-      #inTurnBlurringTextG_4.inTurnBlurringTextG
-        | d
-      #inTurnBlurringTextG_5.inTurnBlurringTextG
-        | i
-      #inTurnBlurringTextG_6.inTurnBlurringTextG
-        | n
-      #inTurnBlurringTextG_7.inTurnBlurringTextG
-        | g
-      #inTurnBlurringTextG_8.inTurnBlurringTextG
-        | .
-      #inTurnBlurringTextG_9.inTurnBlurringTextG
-        | .
-      #inTurnBlurringTextG_10.inTurnBlurringTextG
-        | .
+  aside
+    a#upload-mod(data-icon="^",href="#", onclick="return false") Upload a new mod
+    a.current Categories
+    ul
+      li(class="filter", data-filter="mix_all") All
+      li(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
+      li(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
+      li(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
+      li(class="filter", data-filter="5254248c73494d4c9c000033") World
+      li(class="filter", data-filter="525425d673494d4c9c000049") Decoration
+      li(class="filter", data-filter="5254260348a94512d900001f") GUI
+      li(class="filter", data-filter="5254268171993abd0d00007a") Sounds
+      li(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
   #main
     ul(id="Grid")

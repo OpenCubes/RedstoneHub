@@ -6,11 +6,14 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.2.6",
+    "express": "*",
     "jade": "*",
     "less-middleware": "*",
-    "passport": "~0.1.17",
-    "passport-auth0": "0.0.11",
-    "passport-local-mongoose": "~0.2.5"
+    "passport": "*",
+    "passport-local-mongoose": "*",
+    "bower": "*"
+  },
+  "devDependencies": {
+    "grunt-bower-requirejs": "~0.7.1"
   }
 }

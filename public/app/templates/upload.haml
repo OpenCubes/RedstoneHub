@@ -1,0 +1,27 @@
+%form.form-container
+  %h4 Name
+  #general-info
+    %div
+      %input.form-field{name: "name", type: "text"}/
+      %span#legend Make it GOOD
+    #cat
+      %label Category
+      %select.select{name: "category", tabindex: "2"}
+        %option{value: "cheats"} Cheats
+        %option{value: "decoration"} Decoration
+        %option{value: "fixes"} Fixes
+        %option{value: "gameplay"} Gameplay
+        %option{value: "gui"} GUI
+        %option{value: "misc"} Misc
+        %option{value: "mobs"} Mobs
+        %option{value: "sounds"} Sounds
+        %option{value: "world"} World
+  %label.form-title
+    %h4 Summary
+  %textarea#desc.form-field{name: "sum"}
+  %label.form-title
+    %h4 Description
+  #epiceditor
+#send_bottom
+  %button.ladda-button{"data-style" => "expand-right", onclick: "$('form').submit()"}
+    %span.ladda-label Submit
