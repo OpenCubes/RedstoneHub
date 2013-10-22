@@ -18,6 +18,8 @@
     "Ladda": "*",
     "jquery-dropkick2": "~1.0.0",
     "haml": "https://github.com/creationix/haml-js.git#~0.2.5",
-    "jquery.browser": "~0.0.3"
+    "jquery.browser": "~0.0.3",
+    "sir-trevor-js": "~0.2.3",
+    "nprogress": "~0.1.2"
   }
 }

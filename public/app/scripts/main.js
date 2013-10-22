@@ -15,9 +15,12 @@
              'jquery.qtip': 'qtip2/basic/jquery.qtip',
              sammy: 'sammy/lib/sammy',
              'sammy.haml': 'sammy/lib/plugins/sammy.haml',
+             'sammy.title': 'sammy/lib/plugins/sammy.title',
              haml: 'haml/lib/haml',
              browser: 'jquery.browser/jquery.browser.min',
-             utils: '../../app/scripts/utils'
+             utils: '../../app/scripts/utils',
+             autosize: 'jquery-autosize/jquery.autosize.min',
+             nprogress: 'nprogress/nprogress'
          },
          shim: {
              dropkick: {
@@ -29,15 +32,22 @@
              utils: {
                  deps: ['jquery']
              },
+             autosize: {
+                 deps: ['jquery']
+             },
              'sammy.haml': {
                  deps: ['haml']
+             },
+             'sammy.title': {
+                 deps: ['sammy']
              }
          }
 
      });
-     requirejs(['jquery', 'haml'], function($, haml) {
-         console.log(haml);
+     requirejs(['jquery', 'haml', 'nprogress'], function($, haml, np) {
+         
          window.haml = haml;
+         NProgress.start();
          requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown'], function(utils, sammy, shaml, browser, markdow) {
              var addCss = function(url) {
                  $('<link>').appendTo($('head')).attr({
@@ -45,7 +55,7 @@
                      rel: 'stylesheet'
                  }).attr('href', url);
              };
-
+             NProgress.inc();
              var app = sammy('#main', function() {
                  var self = this;
                  self.use(shaml);
@@ -53,28 +63,27 @@
 
 
                  self.get('/upload', function(context) {
-                     /*
-                     var s = context.render('app/templates/upload.haml', {});
-                     console.log(s);
-context.app.swap(s);
-*/
+
                      //self.setTitle('Upload a new mod - Open Cubes');
                      this.partial('app/templates/upload.haml', function() {
 
-                         //                         $('form').css({
-                         //                           'opacity': '0'
-                         //                     });
+                         NProgress.inc();
+                         $('form').css({
+                             'opacity': '0'
+                         });
+                         addCss('/components/jquery-dropkick2/dropkick.css');
                          $('#epiceditor').height(500);
-                         requirejs(["EpicEditor", "markdown", "ladda", "dropkick"], function(eeditor, markd, Ladda, dk) {
+                         requirejs(["EpicEditor", "markdown", "ladda", "dropkick", "autosize"], function(eeditor, markd, Ladda, dk, as) {
+                             NProgress.inc();
+                             NProgress.inc();
                              var editor;
-                             addCss('/components/jquery-dropkick2/dropkick.css');
                              addCss('/components/Ladda/dist/ladda.min.css');
 
-                             //$(".input_container").parent().addClass("selected");
-                             //console.log(dk);
                              $('.select').dropkick();
-                             $("form").unbind('submit').on("submit", function(event) {
+                             $('textarea').autosize();
+                             $("#submit").unbind('click').on("click", function(event) {
                                  event.preventDefault();
+                                 console.log('hi');
                                  var form = $('form').serializeObject();
                                  form.desc = editor.exportFile();
                                  // Create a new instance of ladda for the specified button
@@ -82,8 +91,7 @@ context.app.swap(s);
 
                                  // Start loading
                                  l.start();
-                                 var self = this;
-
+                              
                                  $.ajax({
                                      url: '/ajax/addmod/',
                                      type: 'POST',
@@ -107,7 +115,6 @@ context.app.swap(s);
                                          }
                                          // Stop loading
                                          l.stop();
-                                         $.off(self);
 
                                      },
                                      error: function(jqXHR, textStatus, err) {
@@ -153,11 +160,15 @@ context.app.swap(s);
                                  },
                                  autogrow: true
                              });
-                             editor.load(function() {
-                                 editor.preview();
+                             editor.load(function() { //editor.preview();
                                  $('form').css({
                                      'opacity': '1'
                                  });
+
+                                 NProgress.done();
+                                 editor.reflow(function () {
+                                     $().getScroll().scrollTop(0);
+                                 })
                              });
                          });
 

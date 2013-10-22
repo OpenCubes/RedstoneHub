@@ -11,7 +11,9 @@
     "less-middleware": "*",
     "passport": "*",
     "passport-local-mongoose": "*",
-    "bower": "*"
+    "bower": "*",
+    "mongoose": "~3.6.20",
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"
