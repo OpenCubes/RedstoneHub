@@ -9,7 +9,7 @@ block scripts
   // script(src="/components/sammy/lib/sammy.js")
   // script(src="/components/haml/lib/haml.js")
   // script(src="/components/sammy/lib/plugins/sammy.haml.js")
-  script(src="/components/requirejs/require.js",  data-main="app/scripts/main.js")
+  script(src="/components/requirejs/require.js",  data-main="/app/scripts/main.js")
 
 block stylesheets
   //link(rel='stylesheet', href='/stylesheets/ladda.min.css')
@@ -31,17 +31,17 @@ block navbar
 block content
   div(id="loader")
   aside
-    a#upload-mod(data-icon="^",href="#", onclick="return false") Upload a new mod
+    a#upload-mod(data-icon="^",href="/upload") Upload a new mod
     a.current Categories
-    ul
-      li(class="filter", data-filter="mix_all") All
-      li(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
-      li(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
-      li(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
-      li(class="filter", data-filter="5254248c73494d4c9c000033") World
-      li(class="filter", data-filter="525425d673494d4c9c000049") Decoration
-      li(class="filter", data-filter="5254260348a94512d900001f") GUI
-      li(class="filter", data-filter="5254268171993abd0d00007a") Sounds
-      li(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
+    #categories
+      a(class="filter", data-filter="mix_all") All
+      a(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
+      a(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
+      a(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
+      a(class="filter", data-filter="5254248c73494d4c9c000033") World
+      a(class="filter", data-filter="525425d673494d4c9c000049") Decoration
+      a(class="filter", data-filter="5254260348a94512d900001f") GUI
+      a(class="filter", data-filter="5254268171993abd0d00007a") Sounds
+      a(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
   #main
     ul(id="Grid")

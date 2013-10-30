@@ -62,18 +62,19 @@ app.use(app.router);
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
-//
-// INDEX
-app.get('/:var(browse|upload)?', function (req, res) {
+var index = function(req, res) {
     console.log('req' + req.user)
     res.render('index', {
         user: req.user,
         logged: (req.user ? true : false),
         title: 'Homepage'
     });
-});
+};
+// INDEX
+app.get('/:var(browse|upload)?', index);
+app.get('/view/:id', index)
 // ADD MOD
-app.get('/add', function (req, res) {
+app.get('/add', function(req, res) {
     res.writeHead(200);
     var html = jade.renderFile('./views/addmod.jade');
     res.write(html);
@@ -83,14 +84,14 @@ app.get('/add', function (req, res) {
 // LOGIN
 
 
-app.get('/register', function (req, res) {
+app.get('/register', function(req, res) {
     res.render('register', {});
 });
 
-app.post('/register', function (req, res) {
+app.post('/register', function(req, res) {
     User.register(new User({
         username: req.body.username
-    }), req.body.password, function (err, account) {
+    }), req.body.password, function(err, account) {
         if (err) {
             return res.render('register', {
                 account: account
@@ -101,7 +102,7 @@ app.post('/register', function (req, res) {
     });
 });
 
-app.get('/login', function (req, res) {
+app.get('/login', function(req, res) {
     res.render('login', {
         user: req.user
     });
@@ -112,22 +113,24 @@ app.post('/login' , function (req, res) {
     passport.authenticate('local');
 });*/
 
-app.get('/ajax/logout', function (req, res) {
+app.get('/ajax/logout', function(req, res) {
     req.logout();
     res.send('');
 });
-app.get('/logout', function (req, res) {
+app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
 
-app.post('/login', passport.authenticate('local', {}), function (req, res) {
-    res.send({user: req.user});
+app.post('/login', passport.authenticate('local', {}), function(req, res) {
+    res.send({
+        user: req.user
+    });
 });
 // AJAX
 
 // AJAX ROUTE FOR ADDING MOD
-app.post('/ajax/addmod/', function (req, res) {
+app.post('/ajax/addmod/', function(req, res) {
     var enforce = require("enforce");
     var form = JSON.parse(req.body.form);
     console.log(form);
@@ -154,37 +157,37 @@ app.post('/ajax/addmod/', function (req, res) {
 
     },
 
-    function (err) {
-        if (!err) {// find each person with a last name matching 'Ghost'
-        var query = Category.findOne({
-            'slug': category
-        });
-        console.log((category));
-        query.limit(1);
-        // execute the query at a later time
-        query.exec(function(err, cat) {
-            if (err) throw err;
-            
-            console.log((cat));
-             var document = {
-                name: name,
-                summary: sum,
-                description: desc,
-                version: version,
-                logo: logo,
-                dl_link: dl_link,
-                creation_date: Date.now(),
-                category_id: cat._id
-            };
-            var doc = new Mod(document);
-            doc.save(function (err) {
-                if (err) {
-                    return err;
-                }
-                res.send({});
+    function(err) {
+        if (!err) { // find each person with a last name matching 'Ghost'
+            var query = Category.findOne({
+                'slug': category
             });
-        })
-           
+            console.log((category));
+            query.limit(1);
+            // execute the query at a later time
+            query.exec(function(err, cat) {
+                if (err) throw err;
+
+                console.log((cat));
+                var document = {
+                    name: name,
+                    summary: sum,
+                    description: desc,
+                    version: version,
+                    logo: logo,
+                    dl_link: dl_link,
+                    creation_date: Date.now(),
+                    category_id: cat._id
+                };
+                var doc = new Mod(document);
+                doc.save(function(err) {
+                    if (err) {
+                        return err;
+                    }
+                    res.send({});
+                });
+            })
+
         }
         else {
             console.log(err);
@@ -194,7 +197,7 @@ app.post('/ajax/addmod/', function (req, res) {
 });
 
 // AJAX ROUTE FOR GETTING MODS
-app.get('/ajax/getmods/', function (req, res) {
+app.get('/ajax/getmods/', function(req, res) {
     var limit = req.param('limit');
     var skip = req.param('skip');
     var sort = req.param('sort');
@@ -202,7 +205,7 @@ app.get('/ajax/getmods/', function (req, res) {
 
     var query = Mod.find(null);
     query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id');
-    query.exec(function (err, doc) {
+    query.exec(function(err, doc) {
         if (err) {
             throw err;
         }
@@ -214,12 +217,14 @@ app.get('/ajax/getmods/', function (req, res) {
 });
 
 // AJAX ROUTE FOR VIEWING MOD
-app.get('/ajax/info/', function (req, res) {
+app.get('/ajax/info/', function(req, res) {
     var id = req.param('id');
 
 
-    var query = Mod.findOne({'_id': id}).populate('category_id');
-    query.exec(function (err, doc) {
+    var query = Mod.findOne({
+        '_id': id
+    }).populate('category_id').populate('author', 'username _id');
+    query.exec(function(err, doc) {
         if (err) {
             throw err;
         }
@@ -230,6 +235,6 @@ app.get('/ajax/info/', function (req, res) {
 
 });
 
-http.createServer(app).listen(app.get('port'), function () {
+http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });

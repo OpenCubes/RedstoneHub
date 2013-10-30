@@ -14,9 +14,10 @@ fs.readdir('.', function (err, files) {
     base = m[1];
 
     function load_haml(scope) {
-      fs.readFile(haml_file, function (err, haml) {
-        fs.readFile(base + ".html", function (err, expected) {
+      fs.readFile(haml_file, "utf8", function (err, haml) {
+        fs.readFile(base + ".html", "utf8", function (err, expected) {
           try {
+            sys.puts(haml_file + " Begun")
             var js = Haml.compile(haml);
             var js_opt = Haml.optimize(js);
             var actual = Haml(haml).call(scope.context, scope.locals);
@@ -28,6 +29,7 @@ fs.readdir('.', function (err, files) {
             if (e.message) { message += ": " + e.message; }
             sys.error(haml_file + " FAILED")
             sys.error(message);
+            sys.error(e.stack);
             sys.error("\nJS:\n\n" + js);
             sys.error("\nOptimized JS:\n\n" + js_opt);
             sys.error("\nActual:\n\n" + actual);
@@ -40,7 +42,7 @@ fs.readdir('.', function (err, files) {
 
     // Load scope
     if (files.indexOf(base + ".js") >= 0) {
-      fs.readFile(base + ".js", function (err, js) {
+      fs.readFile(base + ".js", "utf8", function (err, js) {
         load_haml(eval("(" + js + ")"));
       });
     } else {

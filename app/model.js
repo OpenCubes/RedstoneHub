@@ -8,7 +8,10 @@
      _id: Schema.Types.ObjectId,
      name: String,
      version: String,
-     author_id: Object,
+     author: {
+         type: Schema.Types.ObjectId,
+         ref: 'userauths'
+     },
      summary: String,
      description: String,
      logo: String,
@@ -19,6 +22,7 @@
          type: Schema.Types.ObjectId,
          ref: 'categories'
      },
+
      _stars_id: {
          type: Schema.Types.ObjectId,
          ref: 'stars'

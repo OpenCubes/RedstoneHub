@@ -1,8 +1,12 @@
 {
-    "name": "haml",
+    "name": "haml-edge",
     "description": "Haml ported to server-side Javascript. This is a traditional server-side templating language.",
     "keywords": ["haml", "template"],
+    "homepage": "https://github.com/creationix/haml-js",
     "main" : "./lib/haml",
-    "author": "Tim Caswell <tim@creationix.com>",
-    "version": "0.2.5"
+    "bin": {
+        "haml-js": "./lib/cli.js"
+    },
+    "author": "Aaron Blohowiak <aaron.blohowiak@gmail.com>, Tim Caswell <tim@creationix.com>",
+    "version": "0.3.0"
 }

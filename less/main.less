@@ -44,15 +44,16 @@
 }
 
 /* Use the following CSS code if you want to have a class per icon */
-@nav_bg: #1a131a;
-@main_bg: #7a7a82;
-@text_color: #1a1a26;
+@nav_bg: #193441;
+@main_bg: lighten(@nav_bg, 5%);
+@text_color: #f0fff6;
 
 .flatshadow(){
-    .box-shadow(~"inset -3px -3px 0px rgba(0, 0, 0,0.2)");
+    .box-shadow(~"inset -4px -4px 0px rgba(0, 0, 0,0.3)");
+        .stransition(all, 250ms, ease);
     &:hover {
         .box-shadow(~"");
-        .stransition(all, 250mx, ease);
+        .stransition(all, 250ms, ease);
     }
     
 }
@@ -171,18 +172,18 @@ aside {
 
 
 #main {
-    float: right;
-    width: 60%;
+    float: left;
+    width: 50%;
     margin-top: 30px;
-    margin-right: 200px;
+    margin-left: 50px;
     margin-bottom: 50px;
-    padding: 20px 20px;
+    padding: 20px 20px;/*
     background-color:#ffffff;
     border: solid 1px #383a3d;
-    .sradius(10px);
+    .border-radius(0 10px 10px 0);
     -moz-box-shadow: 3px 3px 14px #423d42;
     -webkit-box-shadow: 3px 3px 14px #423d42;
-    box-shadow: 3px 3px 14px #423d42;
+    box-shadow: 3px 3px 14px #423d42;*/
     .stransition(height, 500ms, ease);
 }
 #epiceditor {
@@ -197,10 +198,8 @@ aside {
     margin-left: 20px;
 } 
 .mix {
-    h1 {
-        
-        color: @text_color;
-    }
+    list-style: none;
+    margin-bottom: 20px;
     .modinfo {
         margin-left: 100px;
         color: @text_color;
@@ -213,22 +212,70 @@ aside {
     }
     .summary {
         position:                   relative;
-        font-size:                  22px;
+        font-size:                  15px;
         display:                    block;
         overflow:                   hidden;
         margin-bottom: 20px;
         color: @text_color;
     }
     .links {
-        font-size: 22px;
-        color: #4278ff;
         a {
-            color: #4278ff;
+            font-size: 15px;
+            color: @text_color;
             
         }
     }
     .title {
-        font-size: 30px;
+        font-size: 20px;
+        color: @text_color;
+    }
+    .actions {
+        float: right;
+        font-size: 16px;
+        //border: solid 1px darken(@text_color, 15%);
+        background-color: darken(@main_bg, 7.5%);
+        color: @text_color;
+        .border-radius(6px);
+        div {
+            padding: 10px;
+        }
+        .download {
+            .box-shadow(~"inset -4px 0 0px rgba(0, 0, 0,0.3)");
+            .stransition(all, 250ms, ease);
+            &:hover {
+                 .box-shadow(~"");
+                 .stransition(all, 250ms, ease);
+             }
+        }
+        .cart {
+            cursor: pointer;
+            border-top: solid 1px darken(@main_bg, 12.5%);
+            .box-shadow(~"inset -4px -4px 0px rgba(0, 0, 0,0.3)");
+            .stransition(all, 250ms, ease);
+            &:hover {
+                 .box-shadow(~"");
+                 .stransition(all, 250ms, ease);
+             }
+        }
+    }
+}
+// VIEW
+.meta {
+    color: @text_color;
+    .logo {
+        float: left;
+        height: 100px;
+        width: 100px;
+    }
+    .title {
+        font-size: 24px;
+    }
+    .stats {
+        margin-top: 15px;
+        font-size: 16px;
+        span.label {
+            margin-left: 10px;
+        }
     }
 }
 fieldset {

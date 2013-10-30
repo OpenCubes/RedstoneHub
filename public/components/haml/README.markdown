@@ -112,9 +112,89 @@ The three recognized `options` are:
  
 See [test.js][] for an example usage of Haml.render
 
+## Executable JavaScript (not output)
+
+New in version 0.2.6 is the ability to embed javascript in your template function.  This lets you do variable assignments, if/else, switch statements, and even define functions. In Haml.js, execution blocks begin with a `-` and define a raw js block. This behaves slightly differently from Ruby's Haml.  The advantage is that you can easily have multi-line executable blocks and comments, but the downside is that that you have to "outdent" the haml if you want to output from within a javascript block.
+
+Simple example:
+
+    - var area = 0.5 * length * height
+    .area= area
+
+Multi-line example:
+
+    - var obj = {
+        area: 0.5 * b * h,
+        r: opposite / adjacent
+      }
+    .triangle-details Area is: #{area} and the ratio is: #{r}
+
+"Outdent" the haml in a javascript block (the "goodbye" div is not rendered!)
+
+    .conditional
+      - var a = "strings are truthy"
+      - if(a){
+      .hello
+      -  } else{
+      .goodbye
+      - }
+
+You can even define functions:
+
+    - function b(item){
+    .item
+      %b= item
+      %span.length= item.length
+    - }
+    - b("Hi")
+    - b("World")
+
+This outputs:
+
+    <div class="item"><b>Hi</b><span class="length">2</span></div><div class="item"><b>World</b><span class="length">5</span></div>
+
+Please see test/raw_complex.haml for more details and examples.
+
+## Comments
+
+Comments that will **not** appear in the compiled JS function nor the output begin with `-#`
+
+    -# This is a comment
+    - # This is a syntax error because of the extraneous space between the - and #.
+
+If you want to have comments that will be in the compiled JS function but *NOT* the final HTML output:
+
+    - /*
+      here we can have a comment that will not be output. Since executable-JS is block-level,
+      we can have as much comment as we want, and it will not be output to html */
+
+If you want an HTML comment that **WILL** be in the final HTML, begin with `/`
+
+## Whitespace
+
+By default, Haml.js **has no whitespace between tags**.  In this way, Haml.js is the opposite of Haml in Ruby.  You can insert whitespace around or inside tags with `>` and `<`, respectively. 
+
+Most commonly, you want to have an `a` or `span` with whitespace around it:
+
+    Download the file
+    %a(href="/home")> here
+    now.
+
+Will produce:
+
+    Download the file <a href="/home">here</a> now.
+
+You can also combine them if you want to have whitespace around and inside your tag.
+
+    %span<> This will have space in and around it.
+    %span>< This will, too.
+    %span><= "also works with code".toUpperCase()
+
+Please see `test/whitespace.haml` for more examples.
+
 ## Code interpolation
 
-New in version 0.2.0 there is string interpolation throughout.  This means that the body of regular text areas can have embedded code.  This is true for attributes and the contents of plugins like javascript and markdown also.  If you notice an area that doesn't support interpolation and it should then send me a note and I'll add it.
+As of version 0.2.0 there is string interpolation throughout.  This means that the body of regular text areas can have embedded code.  This is true for attributes and the contents of plugins like javascript and markdown also.  If you notice an area that doesn't support interpolation and it should then send me a note and I'll add it.
 
 ## Plugins
 
@@ -146,9 +226,9 @@ You can loop over the keys and values of objects too (Note the inner `:each` loo
             %dt&= name
             %dd&= value
 
-### `:css` and `:javascript` helpers.
+### `:css` and `:script` helpers.
 
-It's easy to embed javascript and css blocks in an haml document.
+It's easy to embed script and css tags in an haml document. Note that both `:script` and `:javascript` will work.
 
     %head
       :javascript
@@ -199,7 +279,3 @@ Haml-js is [licensed][] under the [MIT license][].
 [jquery-haml]: http://github.com/creationix/jquery-haml
 [haml]: http://haml-lang.com/
 [test.js]: http://github.com/creationix/haml-js/blob/master/test/test.js
-
-
- 
- 

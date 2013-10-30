@@ -169,13 +169,14 @@ var Haml;
   matchers = [
     // html tags
     {
+      name: "html tags",
       regexp: /^(\s*)((?:[.#%][a-z_\-][a-z0-9_:\-]*)+)(.*)$/i,
       process: function () {
-        var tag, classes, ids, attribs, content;
-        tag = this.matches[2];
-        classes = tag.match(/\.([a-z_\-][a-z0-9_\-]*)/gi);
-        ids = tag.match(/\#([a-z_\-][a-z0-9_\-]*)/gi);
-        tag = tag.match(/\%([a-z_\-][a-z0-9_:\-]*)/gi);
+        var line_beginning, tag, classes, ids, attribs, content, whitespaceSpecifier, whitespace={}, output;
+        line_beginning = this.matches[2];
+        classes = line_beginning.match(/\.([a-z_\-][a-z0-9_\-]*)/gi);
+        ids = line_beginning.match(/\#([a-z_\-][a-z0-9_\-]*)/gi);
+        tag = line_beginning.match(/\%([a-z_\-][a-z0-9_:\-]*)/gi);
 
         // Default to <div> tag
         tag = tag ? tag[0].substr(1, tag[0].length) : 'div';
@@ -184,6 +185,22 @@ var Haml;
         if (attribs) {
           attribs = parse_attribs(attribs);
           if (attribs._content) {
+            if(whitespaceSpecifier = attribs._content.match(/^([<>]{1,2})/)){
+              whitespaceSpecifier = whitespaceSpecifier[1];
+              if(whitespaceSpecifier.length == 2){
+                attribs._content = attribs._content.substr(2)
+                whitespace.around = true;
+                whitespace.inside = true;
+              }else{
+                attribs._content = attribs._content.substr(1)
+                if(whitespaceSpecifier == ">")
+                  whitespace.around = true;
+                else
+                  whitespace.inside = true;
+              }
+            }
+            //once we've identified the tag and its attributes, the rest is content.
+            // this is currently trimmed for neatness.
             this.contents.unshift(attribs._content.trim());
             delete(attribs._content);
           }
@@ -222,19 +239,32 @@ var Haml;
         if (content === '""') {
           content = '';
         }
+        
+        if(whitespace.inside){
+          content = '" '+content.substr(1, content.length - 2)+' "';
+        }
 
         if (forceXML ? content.length > 0 : self_close_tags.indexOf(tag) == -1) {
-          return '"<' + tag + attribs + '>"' +
+          output = '"<' + tag + attribs + '>"' +
             (content.length > 0 ? ' + \n' + content : "") +
             ' + \n"</' + tag + '>"';
         } else {
-          return '"<' + tag + attribs + ' />"';
+          output = '"<' + tag + attribs + ' />"';
         }
+        
+        if(whitespace.around){
+          //output now contains '"<b>hello</b>"'
+          //we need to crack it open to insert whitespace.
+          output = '" '+output.substr(1, output.length - 2)+' "';
+        }
+
+        return output;
       }
     },
 
     // each loops
     {
+      name: "each loop",
       regexp: /^(\s*)(?::for|:each)\s+(?:([a-z_][a-z_\-]*),\s*)?([a-z_][a-z_\-]*)\s+in\s+(.*)(\s*)$/i,
       process: function () {
         var ivar = this.matches[2] || '__key__', // index
@@ -257,6 +287,7 @@ var Haml;
 
     // if statements
     {
+      name: "if",
       regexp: /^(\s*):if\s+(.*)\s*$/i,
       process: function () {
         var condition = this.matches[2];
@@ -266,9 +297,40 @@ var Haml;
           '} else { return ""; } }).call(this)';
       }
     },
+    
+    // silent-comments
+    {
+      name: "silent-comments",
+      regexp: /^(\s*)-#\s*(.*)\s*$/i,
+      process: function () {
+        return '""';
+      }
+    },
+    
+    //html-comments
+    {
+      name: "silent-comments",
+      regexp: /^(\s*)\/\s*(.*)\s*$/i,
+      process: function () {
+        this.contents.unshift(this.matches[2]);
+        
+        return '"<!--'+this.contents.join('\\n')+'-->"';
+      }
+    },
+    
+    // raw js
+    {
+      name: "raw",
+      regexp: /^(\s*)-\s*(.*)\s*$/i,
+      process: function () {
+        this.contents.unshift(this.matches[2]);
+        return '"";' + this.contents.join("\n")+"; _$output = _$output ";
+      }
+    },
 
     // declarations
     {
+      name: "doctype",
       regexp: /^()!!!(?:\s*(.*))\s*$/,
       process: function () {
         var line = '';
@@ -317,6 +379,7 @@ var Haml;
 
     // Embedded markdown. Needs to be added to exports externally.
     {
+      name: "markdown",
       regexp: /^(\s*):markdown\s*$/i,
       process: function () {
         return parse_interpol(exports.Markdown.encode(this.contents.join("\n")));
@@ -325,6 +388,7 @@ var Haml;
 
     // script blocks
     {
+      name: "script",
       regexp: /^(\s*):(?:java)?script\s*$/,
       process: function () {
         return parse_interpol('\n<script type="text/javascript">\n' +
@@ -336,13 +400,14 @@ var Haml;
 
     // css blocks
     {
+      name: "css",
       regexp: /^(\s*):css\s*$/,
       process: function () {
-        return JSON.stringify('\n<style type="text/css">\n' +
+        return JSON.stringify('<style type="text/css">\n' +
           this.contents.join("\n") +
-          "\n</style>\n");
+          "\n</style>");
       }
-    },
+    }
 
   ];
 
@@ -352,7 +417,7 @@ var Haml;
 
     // If lines is a string, turn it into an array
     if (typeof lines === 'string') {
-      lines = lines.trim().split("\n");
+      lines = lines.trim().replace(/\n\r|\r/g, '\n').split('\n');
     }
 
     lines.forEach(function(line) {
@@ -376,11 +441,12 @@ var Haml;
           if (match) {
             block = {
               contents: [],
+              indent_level: (match[1]),
               matches: match,
               check_indent: new RegExp("^(?:\\s*|" + match[1] + "  (.*))$"),
               process: matcher.process,
               render_contents: function () {
-                return compile(this. contents);
+                return compile(this.contents);
               }
             };
             found = true;
@@ -425,7 +491,12 @@ var Haml;
     if (block) {
       output.push(block.process());
     }
-    return output.filter(function (part) { return part && part.length > 0}).join(" +\n");
+    
+    var txt = output.filter(function (part) { return part && part.length > 0}).join(" +\n");
+    if(txt.length == 0){
+      txt = '""';
+    }
+    return txt;
   };
 
   function optimize(js) {
@@ -437,7 +508,7 @@ var Haml;
         buffer = [];
       }
     }
-    js.split("\n").forEach(function (line) {
+    js.replace(/\n\r|\r/g, '\n').split('\n').forEach(function (line) {
       part = line.match(/^(\".*\")(\s*\+\s*)?$/);
       if (!part) {
         flush();
@@ -459,6 +530,7 @@ var Haml;
 
   function render(text, options) {
     options = options || {};
+    text = text || "";
     var js = compile(text);
     if (options.optimize) {
       js = Haml.optimize(js);
@@ -470,7 +542,9 @@ var Haml;
     return (function () {
       with(locals || {}) {
         try {
-          return eval("(" + js + ")");
+          var _$output;
+          eval("(" + js + ")");
+          return _$output; //set in eval
         } catch (e) {
           return "\n<pre class='error'>" + html_escape(e.stack) + "</pre>\n";
         }
@@ -482,15 +556,17 @@ var Haml;
   Haml = function Haml(haml, xml) {
     forceXML = xml;
     var js = optimize(compile(haml));
-    return new Function("locals",
-      html_escape + "\n" +
-      "with(locals || {}) {\n" +
-      "  try {\n" +
-      "    return (" + js + ");\n" +
-      "  } catch (e) {\n" +
-      "    return \"\\n<pre class='error'>\" + html_escape(e.stack) + \"</pre>\\n\";\n" +
-      "  }\n" +
-      "}");
+    
+    var str = "with(locals || {}) {\n" +
+    "  try {\n" +
+    "   var _$output=" + js + ";\n return _$output;" +
+    "  } catch (e) {\n" +
+    "    return \"\\n<pre class='error'>\" + html_escape(e.stack) + \"</pre>\\n\";\n" +
+    "  }\n" +
+    "}"
+    var fun =  html_escape + "\n" + str;
+    console.log(fun)
+    return new Function("locals", fun);
   }
   Haml.compile = compile;
   Haml.optimize = optimize;
