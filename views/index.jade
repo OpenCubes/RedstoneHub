@@ -14,7 +14,6 @@ block scripts
 block stylesheets
   //link(rel='stylesheet', href='/stylesheets/ladda.min.css')
   link(rel='stylesheet', href="/components/qtip2/jquery.qtip.min.css")
-  link(rel='stylesheet', href="/app/lib/jquery-ui/css/opencubes/jquery-ui-1.10.3.custom.min.css")
 
 block navbar
   div#main-nav
@@ -27,7 +26,7 @@ block navbar
       a#logout(href="/logout", onclick="return false") Logout
     else
       a(href="/register", data-icon="user") Register
-      a#login(href="/login", class="tooltip", title="", onclick="return false") Login
+      a(href="/login", class="tooltip", title="", onclick="return false") Login
 
 block content
   div(id="loader")

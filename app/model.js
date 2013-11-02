@@ -5,6 +5,7 @@
  if (!db) console.log('error while connecting');
  var modSchema = new mongoose.Schema({
 
+     _id: Schema.Types.ObjectId,
      name: String,
      version: String,
      author: {
@@ -52,4 +53,3 @@
  exports.mod = db.model('mods', modSchema);
  exports.stars = db.model('stars', starSchema);
  exports.category = db.model('categories', categorySchema);
- exports.mongoose = Schema;

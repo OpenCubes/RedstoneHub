@@ -565,6 +565,7 @@ var Haml;
     "  }\n" +
     "}"
     var fun =  html_escape + "\n" + str;
+    console.log(fun)
     return new Function("locals", fun);
   }
   Haml.compile = compile;

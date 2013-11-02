@@ -13,8 +13,7 @@
     "passport-local-mongoose": "*",
     "bower": "*",
     "mongoose": "~3.6.20",
-    "async": "~0.2.9",
-    "jquery-file-upload-middleware": "~0.1.0"
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"
