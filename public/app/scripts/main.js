@@ -1,42 +1,63 @@
      requirejs.config({
-         baseUrl: '../../components/',
+         baseUrl: '../../',
          paths: {
-             EpicEditor: 'EpicEditor/epiceditor/js/epiceditor.min',
-             markdown: 'markdown/lib/markdown',
-             ladda: 'Ladda/dist/ladda.min',
-             dropkick: 'jquery-dropkick2/jquery.dropkick-1.0.0',
-             Ladda: 'Ladda/dist/ladda.min',
-             'jquery-autosize': 'jquery-autosize/jquery.autosize',
-             mixitup: 'mixitup/jquery.mixitup.min',
-             jquery: '//code.jquery.com/jquery-1.9.1',
-             'jquery.migrate': '//code.jquery.com/jquery-migrate-1.2.1',
-             history: 'history',
-             'history.js': 'history',
-             spin: 'spin.js/dist/spin',
-             'jquery.qtip': 'qtip2/basic/jquery.qtip',
-             sammy: 'sammy/lib/sammy',
-             'sammy.haml': 'sammy/lib/plugins/sammy.haml',
-             'sammy.title': 'sammy/lib/plugins/sammy.title',
-             haml: 'haml/lib/haml',
-             browser: 'jquery.browser/jquery.browser.min',
-             utils: '../../app/scripts/utils',
-             autosize: 'jquery-autosize/jquery.autosize.min',
-             nprogress: 'nprogress/nprogress'
-         },
+             'EpicEditor':          'components/EpicEditor/epiceditor/js/epiceditor.min',
+             'markdown':            'components/markdown/lib/markdown',
+             'ladda':               'components/Ladda/dist/ladda.min',
+             'dropkick':            'components/jquery-dropkick2/jquery.dropkick-1.0.0',
+             'Ladda':               'components/Ladda/dist/ladda.min',
+             'jquery-autosize':     'components/jquery-autosize/jquery.autosize',
+             'mixitup':             'components/mixitup/jquery.mixitup.min',
+             'jquery':              '//code.jquery.com/jquery-1.9.1',
+             'jquery.migrate':      '//code.jquery.com/jquery-migrate-1.2.1',
+             'jqueryui':            '//code.jquery.com/ui/1.10.3/jquery-ui',
+             'history':             'components/history',
+             'history.js':          'components/history',
+             'spin':                'components/spin.js/dist/spin',
+             'jquery.qtip':         'components/qtip2/basic/jquery.qtip',
+             'sammy':               'components/sammy/lib/sammy',
+             'sammy.haml':          'components/sammy/lib/plugins/sammy.haml',
+             'sammy.title':         'components/sammy/lib/plugins/sammy.title',
+             'haml':                'components/haml/lib/haml',
+             'browser':             'components/jquery.browser/jquery.browser.min',
+             'utils':               'app/scripts/utils',
+             'highlight':           'app/lib/highlight.js/highlight.pack',
+             'autosize':            'components/jquery-autosize/jquery.autosize.min',
+             'nprogress':           'components/nprogress/nprogress',
+             'noty':                'components/noty/js/noty/jquery.noty',
+             'noty-layout':         'components/noty/js/noty/layouts/bottom',
+             'noty-layout-left':    'components/noty/js/noty/layouts/bottomLeft',
+             'noty-theme':          'components/noty/js/noty/themes/default',
+             'qtip2':               'app/lib/qtip/jquery.qtip.min',
+             'imagesloaded':        'app/lib/qtip/imagesloaded.min',
+             'eventEmitter':        'components/eventEmitter/EventEmitter.min',
+             'eventie':             'components/eventie/eventie',
+             'tabulous':            'components/tabulous/demo/src/tabulous.min',
+             'file-upload':         'js/jquery.fileupload',
+             'file-upload-ui':      'js/jquery.fileupload-ui',
+             'iframe-transport':    'js/jquery.iframe-transport',
+             'tmpl':                'components/blueimp-tmpl/js/tmpl.min'
+        },
          shim: {
-             dropkick: {
+             'file-upload': {
+                 deps: ['jquery', 'jqueryui', 'file-upload-ui', 'iframe-transport', 'tmpl']
+             },/*
+             'file-upload-ui': {
+                 deps: ['file-upload']
+             },*/
+             'dropkick': {
                  deps: ['jquery']
              },
-             browser: {
+             'browser': {
                  deps: ['jquery']
              },
              'jquery.migrate': {
                  deps: ['jquery']
              },
-             utils: {
+             'utils': {
                  deps: ['jquery']
              },
-             autosize: {
+             'autosize': {
                  deps: ['jquery']
              },
              'sammy.haml': {
@@ -45,18 +66,49 @@
              'sammy.title': {
                  deps: ['sammy']
              },
-             nprogress: {
+             'nprogress': {
                  deps: ['jquery']
              },
-             mixitup: {
+             'mixitup': {
+                 deps: ['jquery']
+             },
+             'noty': {
+                 deps: ['jquery']
+             },
+             'noty-layout': {
+                 deps: ['noty']
+             },
+             'noty-layout-left': {
+                 deps: ['noty-layout']
+             },
+             'noty-theme': {
+                 deps: ['noty-layout']
+             },
+             'qtip2': {
+                 deps: ['jquery']  
+             },
+             'tabulous': {
+                 deps: ['jquery']  
+             },
+             'jqueryui': {
                  deps: ['jquery']
              }
          }
 
      });
-     requirejs(['jquery', 'haml', 'nprogress'], function($, haml, np) {
-         $.cart = [];
-         window.haml = haml;
+     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout','noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui'], 
+                        function($, haml, np, notym, notyl, notyll, notyt, hlj, qtip, ui) {
+         $.cart = [];window.haml = haml;
+         $('#login').qtip({
+             content: '<h2>Log In</h2><form action="/login" method="post"><div><label>Username</label><input name="username" type="text"></div><div><label>Password</label><input name="password" type="password"></div><div><input value="Log In" type="submit"></div></form>',
+             show: 'click',
+             hide: 'unfocus',
+             style: 'qtip-dark qtip-rounded',
+             position: {
+                 my: 'top center',
+                 at: 'bottom center'
+             }
+         })
          NProgress.start();
          requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
              var addCss = function(url) {
@@ -69,8 +121,8 @@
              var app = sammy('#main', function() {
                  var self = this;
                  self.use(shaml);
-
-                 self.get('/', function(context) {
+                    
+                self.get('/', function(context) {
                      NProgress.inc();
                      $.ajax({
                          type: "GET",
@@ -128,7 +180,7 @@
 
 
                  });
-    
+                    
                 self.get('/view/:id', function() {
                     var id = this.params['id'];
                     var self = this;
@@ -139,7 +191,19 @@
                             throw err;
                         },
                         success: function(mod) {
+                            var html = markdown.toHTML(mod.description);
+                            NProgress.inc()
+                            mod.htmldesc = html;
                             self.partial('/app/templates/mod.haml', mod, function() {
+                                NProgress.inc();
+                                addCss('/app/lib/highlight.js/styles/tomorrow-night-eighties.css');
+                               // addCss('/components/tabulous/demo/src/tabulous.css');
+                                $('pre code').each(function(i, e) {
+                                    var code = hljs.highlightAuto($(this).html()).value;
+                                    console.log(code);
+                                    $(this).html(code);
+                                });
+                                    $('#tabs').tabs();  
                                 NProgress.done();
                 
                             });
@@ -150,8 +214,21 @@
                 
                 });
                     
-    
-                 self.get('/upload', function(context) {
+                self.get('/edit/:id', function(context) {
+                   NProgress.inc();
+                   var self = this;
+                   require([],
+
+                   function () {
+                       self.partial('/app/templates/edit.haml', undefined, function () {
+               
+                           
+                                NProgress.done();
+
+                       });
+                   });
+                });
+                self.get('/upload', function(context) {
                         console.log('Upload');
                      //self.setTitle('Upload a new mod - Open Cubes');
                      this.partial('app/templates/upload.haml', function() {
@@ -189,18 +266,37 @@
                                      },
                                      dataType: 'json',
                                      success: function(data) {
-                                         if (data) {
-                                             $.each(data, function(i, v) {
-                                                 var e = $('[name="' + v.property + '"]');
-                                                 e.addClass('invalid');
-                                             });
-                                             $().getScroll().scrollTop(1);
-                                             setTimeout(function() {
+                                         console.log(data)
+                                         if (data.Status === 'Error') {
+                                             switch (data.ErrorType) {
+                                                case 'InvalidData':
                                                  $.each(data, function(i, v) {
                                                      var e = $('[name="' + v.property + '"]');
-                                                     e.removeClass('invalid');
+                                                     e.addClass('invalid');
                                                  });
-                                             }, 3000);
+                                                 $().getScroll().scrollTop(1);
+                                                 setTimeout(function() {
+                                                     $.each(data, function(i, v) {
+                                                         var e = $('[name="' + v.property + '"]');
+                                                         e.removeClass('invalid');
+                                                     });
+                                                 }, 3000);
+                                                 break;
+                                             }
+                                             noty({
+                                                 text: data.ErrorMessage,
+                                                 type: 'error',
+                                                 layout: 'bottomLeft'
+                                             })
+                                         }
+                                         else if(data.Status === 'OK'){
+                                             console.log(data);
+                                             noty({
+                                                 text: 'Successfully uploaded. Redirecting...',
+                                                 type: 'success',
+                                                 layout: 'bottomLeft'
+                                             });
+                                             context.redirect('view/'+data.DataId);
                                          }
                                          // Stop loading
                                          l.stop();
@@ -264,13 +360,13 @@
 
                      });
                  });
-
-
-
+                    
+                    
+                
              });
-
+                
              app.run();
-
+                
          });
 
      });
