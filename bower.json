@@ -20,6 +20,11 @@
     "haml": "https://github.com/creationix/haml-js.git#7df30e5a2209317e576d158ca6c3f9ed55b72e4d",
     "jquery.browser": "~0.0.3",
     "sir-trevor-js": "~0.2.3",
-    "nprogress": "~0.1.2"
+    "nprogress": "~0.1.2",
+    "noty": "~2.1.0",
+    "tabulous": "https://github.com/aarondo/tabulous.js.git",
+    "jquery-file-upload": "~9.0.1",
+    "eventEmitter": "~4.2.5",
+    "eventie": "~1.0.3"
   }
 }

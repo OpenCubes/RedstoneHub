@@ -72,7 +72,8 @@ var index = function(req, res) {
 };
 // INDEX
 app.get('/:var(browse|upload)?', index);
-app.get('/view/:id', index)
+app.get('/view/:id', index);
+app.get('/edit/:id', index);
 // ADD MOD
 app.get('/add', function(req, res) {
     res.writeHead(200);
@@ -128,72 +129,97 @@ app.post('/login', passport.authenticate('local', {}), function(req, res) {
     });
 });
 // AJAX
-
 // AJAX ROUTE FOR ADDING MOD
 app.post('/ajax/addmod/', function(req, res) {
-    var enforce = require("enforce");
-    var form = JSON.parse(req.body.form);
-    console.log(form);
-    var name = form.name,
-        sum = form.sum,
-        desc = form.desc,
-        version = form.version,
-        logo = form.logo,
-        dl_link = form.dl_link,
-        category = form.category;
+    var user = req.user;
+    if (user) {
+        var enforce = require("enforce");
+        var form = JSON.parse(req.body.form);
+        console.log(form);
+        var name = form.name,
+            sum = form.sum,
+            desc = form.desc,
+            version = form.version,
+            logo = form.logo,
+            dl_link = form.dl_link,
+            category = form.category;
 
-    var checks = new enforce.Enforce({
-        returnAllErrors: true
-    });
-    checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-    /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
-    checks.check({
-        name: name,
-        sum: sum,
-        desc: desc,
-        version: version,
-        logo: logo,
-        dl_link: dl_link
+        var checks = new enforce.Enforce({
+            returnAllErrors: true
+        });
+        checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
+        /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/
+        .add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+        checks.check({
+            name: name,
+            sum: sum,
+            desc: desc,
+            version: version,
+            logo: logo,
+            dl_link: dl_link
 
-    },
+        },
 
-    function(err) {
-        if (!err) { // find each person with a last name matching 'Ghost'
-            var query = Category.findOne({
-                'slug': category
-            });
-            console.log((category));
-            query.limit(1);
-            // execute the query at a later time
-            query.exec(function(err, cat) {
-                if (err) throw err;
-
-                console.log((cat));
-                var document = {
-                    name: name,
-                    summary: sum,
-                    description: desc,
-                    version: version,
-                    logo: logo,
-                    dl_link: dl_link,
-                    creation_date: Date.now(),
-                    category_id: cat._id
-                };
-                var doc = new Mod(document);
-                doc.save(function(err) {
-                    if (err) {
-                        return err;
-                    }
-                    res.send({});
+        function(err) {
+            if (!err) { // find each person with a last name matching 'Ghost'
+                var query = Category.findOne({
+                    'slug': category
                 });
-            })
+                query.limit(1);
+                // execute the query at a later time
+                query.exec(function(err, cat) {
+                    if (err) {
+                        res.send({
+                            'Status': 'Error',
+                            'ErrorType': 'Exception',
+                            'ErrorMessage': 'An exception has occured',
+                            'ErrorData': err.name
+                        });
+                    }
+                    var document = {
+                        name: name,
+                        summary: sum,
+                        description: desc,
+                        version: version,
+                        logo: logo,
+                        dl_link: dl_link,
+                        creation_date: Date.now(),
+                        category_id: cat._id,
+                        author: user._id
+                    };
+                    var doc = new Mod(document);
+                    doc.save(function(err, mod) {
+                        if (err) {
+                            return err;
+                        };
+                        console.log(mod);
+                        res.send({
+                            'Status': 'OK',
+                            'DataId': mod.id
+                        });
+                       
+                    });
+                })
 
-        }
-        else {
-            console.log(err);
-            res.send(err);
-        }
-    });
+            }
+            else {
+                res.send({
+                    'Status': 'Error',
+                    'ErrorType': 'InvalidData',
+                    'ErrorMessage': 'Some datas are invalid',
+                    'ErrorData': err
+                });
+            }
+        });
+    }
+    else {
+        res.send({
+            'Status': 'Error',
+            'ErrorType': 'Unauthorized',
+            'ErrorMessage': 'Guest can\'t post mods',
+            'ErrorData': ''
+        });
+    }
 });
 
 // AJAX ROUTE FOR GETTING MODS
