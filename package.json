@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "OpenCubes",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,5 +19,8 @@
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"
+  },
+  "scripts": {
+    "start": "node app.js --websocket-port=$OPENSHIFT_NODEJS_PORT --log-level=1"
   }
 }
