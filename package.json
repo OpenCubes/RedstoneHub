@@ -14,7 +14,8 @@
     "bower": "*",
     "mongoose": "~3.6.20",
     "async": "~0.2.9",
-    "passport-local": "~0.1.6"
+    "passport-local": "~0.1.6",
+    "enforce": "~0.1.2"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"

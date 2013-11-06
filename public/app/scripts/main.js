@@ -1,37 +1,39 @@
      requirejs.config({
+         'catcheError': true,
          baseUrl: '../../components/',
          paths: {
-             'EpicEditor':          'EpicEditor/epiceditor/js/epiceditor.min',
-             'markdown':            'markdown/lib/markdown',
-             'ladda':               'Ladda/dist/ladda.min',
-             'dropkick':            'jquery-dropkick2/jquery.dropkick-1.0.0',
-             'Ladda':               'Ladda/dist/ladda.min',
-             'jquery-autosize':     'jquery-autosize/jquery.autosize',
-             'mixitup':             'mixitup/jquery.mixitup.min',
-             'jquery':              '//code.jquery.com/jquery-1.9.1',
-             'jquery.migrate':      '//code.jquery.com/jquery-migrate-1.2.1',
-             'jqueryui':            '//code.jquery.com/ui/1.10.3/jquery-ui',
-             'history':             'history',
-             'history.js':          'history',
-             'spin':                'spin.js/dist/spin',
-             'jquery.qtip':         'qtip2/basic/jquery.qtip',
-             'sammy':               'sammy/lib/sammy',
-             'sammy.haml':          'sammy/lib/plugins/sammy.haml',
-             'sammy.title':         'sammy/lib/plugins/sammy.title',
-             'haml':                'haml/lib/haml',
-             'browser':             'jquery.browser/jquery.browser.min',
-             'utils':               '../../app/scripts/utils',
-             'highlight':           '../../app/lib/highlight.js/highlight.pack',
-             'autosize':            'jquery-autosize/jquery.autosize.min',
-             'nprogress':           'nprogress/nprogress',
-             'noty':                'noty/js/noty/jquery.noty',
-             'noty-layout':         'noty/js/noty/layouts/bottom',
-             'noty-layout-left':    'noty/js/noty/layouts/bottomLeft',
-             'noty-theme':          'noty/js/noty/themes/default',
-             'qtip2':               '../../app/lib/qtip/jquery.qtip.min',
-             'imagesloaded':        '../../app/lib/qtip/imagesloaded.min',
-             'eventEmitter':        'eventEmitter/EventEmitter.min',
-             'eventie':             'eventie/eventie'
+             'EpicEditor': 'EpicEditor/epiceditor/js/epiceditor.min',
+             'markdown': 'markdown/lib/markdown',
+             'ladda': 'Ladda/dist/ladda.min',
+             'dropkick': 'jquery-dropkick2/jquery.dropkick-1.0.0',
+             'Ladda': 'Ladda/dist/ladda.min',
+             'jquery-autosize': 'jquery-autosize/jquery.autosize',
+             'mixitup': 'mixitup/jquery.mixitup.min',
+             'jquery': '//code.jquery.com/jquery-1.9.1',
+             'jquery.migrate': '//code.jquery.com/jquery-migrate-1.2.1',
+             'jqueryui': '//code.jquery.com/ui/1.10.3/jquery-ui',
+             'history': 'history',
+             'history.js': 'history',
+             'spin': 'spin.js/dist/spin',
+             'jquery.qtip': 'qtip2/basic/jquery.qtip',
+             'sammy': 'sammy/lib/sammy',
+             'sammy.haml': 'sammy/lib/plugins/sammy.haml',
+             'sammy.title': 'sammy/lib/plugins/sammy.title',
+             'haml': 'haml/lib/haml',
+             'browser': 'jquery.browser/jquery.browser.min',
+             'utils': '../../app/scripts/utils',
+             'highlight': '../../app/lib/highlight.js/highlight.pack',
+             'autosize': 'jquery-autosize/jquery.autosize.min',
+             'nprogress': 'nprogress/nprogress',
+             'noty': 'noty/js/noty/jquery.noty',
+             'noty-layout': 'noty/js/noty/layouts/bottom',
+             'noty-layout-left': 'noty/js/noty/layouts/bottomLeft',
+             'noty-theme': 'noty/js/noty/themes/default',
+             'qtip2': '../../app/lib/qtip/jquery.qtip.min',
+             'imagesloaded': '../../app/lib/qtip/imagesloaded.min',
+             'eventEmitter': 'eventEmitter/EventEmitter.min',
+             'eventie': 'eventie/eventie',
+             'canvas-loader': '/app/lib/heartcode-canvasloader-min'
          },
          shim: {
              dropkick: {
@@ -77,13 +79,31 @@
                  deps: ['jquery']
              },
              'qtip2': {
-                 deps: ['jquery']  
+                 deps: ['jquery']
              },
          }
 
      });
-     requirejs(['jquery', 'haml', 'nprogress', , 'noty', 'noty-layout','noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui'], 
-                            function($, haml, np, noty, nl, nlf, nt, hlj, qtip, jui) {
+     requirejs.onError = function (err) {
+         if (err.requireType === 'timeout') {
+             // tell user
+             if (!$) {
+                 alert('Error : load timeout. Please reload the page.');
+             }
+             else {
+                 $('body').append('<div id="error"> <h3>Oooops ! Something went wrong</h3>' + '<b>Please reload the page</b><br />Could not load the script ' + err.requireModules + '<br />' + err.message + '</div>');
+                 $("#error").dialog({
+                     modal: true
+                 });
+             }
+         }
+         else {
+             throw err;
+         }
+     };
+     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui'],
+
+     function ($, haml, np, not, nl, nlf, nt, hlj, qtip, jui) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
@@ -97,68 +117,75 @@
                  at: 'bottom center'
              }
          });
-         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
-             var addCss = function(url) {
+         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function (utils, sammy, shaml, browser, markdow, mixitup) {
+             $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
+             var addCss = function (url) {
                  $('<link>').appendTo($('head')).attr({
                      type: 'text/css',
                      rel: 'stylesheet'
                  }).attr('href', url);
              };
              NProgress.inc();
-             var app = sammy('#main', function() {
+             var app = sammy('#main', function () {
                  var self = this;
                  self.use(shaml);
 
-                 self.get('/', function(context) {
+                 self.get('/', function (context) {
                      NProgress.inc();
+                     $.modskip = 0, $.modlimit = 10;
                      $.ajax({
                          type: "GET",
-                         url: "/ajax/getmods/?sort=name",
-                         error: function(err) {
+                         url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
+                         error: function (err) {
                              throw err;
                          },
-                         success: function(mods) {
+                         success: function (mods) {
                              var grid = $('#Grid');
                              NProgress.inc();
                              var content = '';
-                             $.each(mods, function(i) {
-                                var mod = mods[i];
-                                var sum = mod.summary;
-                                var l = mod.summary.length;
-                                if(l > 160) {
-                                    
-                                    sum = sum.substring(0, 150);
-                                    sum = sum.trim() + '...' + sum.substr(l - 10, 9);
-                                }
-                                    content +='<li data-name="' + mod.name + '" data-version="1.6#1.5.63" class="mix '+mod.category_id+' mix_all">' +
-                                    '<img  class="mod_logo" src="' + (mod.logo ? mod.logo : 'http://icons.iconarchive.com/icons/icojam/blue-bits/128/module-puzzle-icon.png') + '" />' +
-                                        '<div class="actions">' +
-                                            '<div class="download" data-icon="download">Download now</div>'+
-                                            '<div class="cart" data-id="'+mod._id+'" data-icon="cartfill">Add to cart</div>'+
-                                        '</div>'+
-                                    '<div class="modinfo">'+
-                                        '<a href="/view/'+mod._id+'" class="view" data-id="'+mod._id+'" >'+
-                                            '<h1 class="title">' + mod.name + '</h1>'+
-                                            '<h6 class="summary text">' +sum + '</h6>'+
-                                        '</a>'+
-                                        '<div class="links">' +
-                                            '<a href="/demo/'+mod._id+'" id="demo demo_'+mod._id+'" data-id="'+mod._id+'" data-icon="play">demo</a> '+
-                                            '<a href="/view/'+mod._id+'" id="view view_'+mod._id+'" data-id="'+mod._id+'" data-icon="eye">view</a> '+
-                                            '<a href="/cmod/'+mod._id+'" id="cmod cmod_'+mod._id+'" data-id="'+mod._id+'" data-icon="cartfill">cart</a> '+
-                                            '<a href="/star/'+mod._id+'" id="star star_'+mod._id+'" data-id="'+mod._id+'" data-icon="stare">1,552,256</a> '+
-                                        '</div>'+
-                                    '</div>'+
-                                '</li>';
-                                
+                             $.each(mods, function (i) {
+                                 var mod = mods[i];
+                                 content += $.renderMod(mod);
+
                              });
-                             context.swap(content, function() {
+                             context.swap(content, function () {
                                  console.log('[INFO]Mixing...');
                                  $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
                                  $('.cart').on('click', function () {
-                                    var id = this.getAttribute('data-id');
-                                    $.cart.push(id);
-                                    
+                                     var id = this.getAttribute('data-id');
+                                     $.cart.push(id);
+
                                  });
+                                 $.doLoad = true;
+                                 $(window).scroll(function () {
+                                     if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+                                         if ($.doLoad === true) {
+                                             $.doLoad = false;
+                                             $('#main').append($.loader);
+                                             $.modskip += 10;
+                                             $.ajax({
+                                                 type: "GET",
+                                                 url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
+                                                 error: function (err) {
+                                                     throw err;
+                                                 },
+                                                 success: function (mods) {
+                                                     $('#main #loader').remove();
+                                                     $.each(mods, function (i) {
+                                                         var mod = mods[i];
+                                                         $('#main').append($.renderMod(mod));
+
+                                                     });
+
+                                                 }
+                                             });
+                                             setTimeout(function () {
+                                                 $.doLoad = true;
+                                             }, 1500);
+                                         }
+                                     }
+                                 });
+
                                  NProgress.done();
 
                              });
@@ -167,58 +194,60 @@
 
 
                  });
-    
-                 self.get('/view/:id', function() {
-                    var id = this.params['id'];
-                    var self = this;
-                    $.ajax({
-                        type: "GET",
-                        url: "/ajax/info/?id=" + id,
-                        error: function(err) {
-                            throw err;
-                        },
-                        success: function(mod) {
-                            var html = markdown.toHTML(mod.description);
-                            NProgress.inc()
-                            mod.htmldesc = html;
-                            self.partial('/app/templates/mod.haml', mod, function() {
-                                NProgress.inc();
-                                addCss('/app/lib/highlight.js/styles/tomorrow-night-eighties.css');
-                               // addCss('/components/tabulous/demo/src/tabulous.css');
-                                $('pre code').each(function(i, e) {
-                                    var code = hljs.highlightAuto($(this).html()).value;
-                                    console.log(code);
-                                    $(this).html(code);
-                                });
-                                $('#tabs').tabs();  
-                                NProgress.done();
-                
-                            });
-                
-                
-                        }
-                    });
-                
-                });
-                    
-                 self.get('/edit/:id', function(context) {
-                   NProgress.inc();
-                   var self = this;
-                   require([],
 
-                   function () {
-                       self.partial('/app/templates/edit.haml', undefined, function () {
-               
-                           
-                                NProgress.done();
+                 self.get('/view/:id', function () {
+                     NProgress.start();
+                     var id = this.params['id'];
+                     var self = this;
+                     $.ajax({
+                         type: "GET",
+                         url: "/ajax/info/?id=" + id,
+                         error: function (err) {
+                             throw err;
+                         },
+                         success: function (mod) {
+                             var html = markdown.toHTML(mod.description);
+                             NProgress.inc()
+                             mod.htmldesc = html;
+                             self.partial('/app/templates/mod.haml', mod, function () {
+                                 NProgress.inc();
+                                 addCss('/app/lib/highlight.js/styles/tomorrow-night-eighties.css');
+                                 // addCss('/components/tabulous/demo/src/tabulous.css');
+                                 $('pre code').each(function (i, e) {
+                                     var code = hljs.highlightAuto($(this).html()).value;
+                                     console.log(code);
+                                     $(this).html(code);
+                                 });
+                                 $('#tabs').tabs();
+                                 NProgress.done();
 
-                       });
-                   });
-                });
-                  self.get('/upload', function(context) {
-                        console.log('Upload');
+                             });
+
+
+                         }
+                     });
+
+                 });
+
+                 self.get('/edit/:id', function (context) {
+                     NProgress.inc();
+                     var self = this;
+                     require([],
+
+                     function () {
+                         self.partial('/app/templates/edit.haml', undefined, function () {
+
+
+                             NProgress.done();
+
+                         });
+                     });
+                 });
+
+                 self.get('/upload', function (context) {
+                     console.log('Upload');
                      //self.setTitle('Upload a new mod - Open Cubes');
-                     this.partial('app/templates/upload.haml', function() {
+                     this.partial('app/templates/upload.haml', function () {
 
                          NProgress.inc();
                          $('#main').css({
@@ -226,7 +255,7 @@
                          });
                          addCss('/components/jquery-dropkick2/dropkick.css');
                          $('#epiceditor').height(500);
-                         requirejs(["EpicEditor", "markdown", "ladda", "dropkick", "autosize"], function(eeditor, markd, Ladda, dk, as) {
+                         requirejs(["EpicEditor", "markdown", "ladda", "autosize"], function (eeditor, markd, Ladda, as) {
                              NProgress.inc();
                              NProgress.inc();
                              var editor;
@@ -234,7 +263,7 @@
 
                              //$('.select').dropkick();
                              $('textarea').autosize();
-                             $("#submit").unbind('click').on("click", function(event) {
+                             $("#submit").unbind('click').on("click", function (event) {
                                  event.preventDefault();
                                  console.log('hi');
                                  var form = $('form').serializeObject();
@@ -252,18 +281,18 @@
                                          form: JSON.stringify(form)
                                      },
                                      dataType: 'json',
-                                     success: function(data) {
+                                     success: function (data) {
                                          console.log(data)
                                          if (data.Status === 'Error') {
                                              switch (data.ErrorType) {
-                                                case 'InvalidData':
-                                                 $.each(data, function(i, v) {
+                                             case 'InvalidData':
+                                                 $.each(data, function (i, v) {
                                                      var e = $('[name="' + v.property + '"]');
                                                      e.addClass('invalid');
                                                  });
-                                                 $().getScroll().scrollTop(1);
-                                                 setTimeout(function() {
-                                                     $.each(data, function(i, v) {
+                                                 $.scroll().scrollTop(1);
+                                                 setTimeout(function () {
+                                                     $.each(data, function (i, v) {
                                                          var e = $('[name="' + v.property + '"]');
                                                          e.removeClass('invalid');
                                                      });
@@ -276,20 +305,20 @@
                                                  layout: 'bottomLeft'
                                              })
                                          }
-                                         else if(data.Status === 'OK'){
+                                         else if (data.Status === 'OK') {
                                              console.log(data);
                                              noty({
                                                  text: 'Successfully uploaded. Redirecting...',
                                                  type: 'success',
                                                  layout: 'bottomLeft'
                                              });
-                                             context.redirect('view/'+data.DataId);
+                                           //  context.redirect('view/' + data.DataId);
                                          }
                                          // Stop loading
                                          l.stop();
 
                                      },
-                                     error: function(jqXHR, textStatus, err) {
+                                     error: function (jqXHR, textStatus, err) {
                                          alert('text status ' + textStatus + ', err ' + err);
                                          // Stop loading
                                          l.stop();
@@ -332,14 +361,14 @@
                                  },
                                  autogrow: true
                              });
-                             editor.load(function() { //editor.preview();
+                             editor.load(function () { //editor.preview();
                                  $('#main').animate({
                                      'opacity': '1'
                                  });
 
                                  NProgress.done();
-                                 editor.reflow(function() {
-                                     $().getScroll().scrollTop(0);
+                                 editor.reflow(function () {
+                                     $.scroll().scrollTop(0);
                                  })
                              });
                          });
@@ -347,9 +376,9 @@
 
                      });
                  });
-                    
-                    
-                
+
+
+
              });
 
              app.run();
