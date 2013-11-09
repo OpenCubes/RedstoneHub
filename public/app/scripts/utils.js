@@ -74,3 +74,11 @@ $.renderMod = function (mod) {
                                     '</div>'+
                                 '</li>';
 };
+$.addMods = function(mods) {
+    var content = '';
+    $.each(mods, function(i) {
+        var mod = mods[i];
+        content += $.renderMod(mod);
+    });
+    return content;
+}

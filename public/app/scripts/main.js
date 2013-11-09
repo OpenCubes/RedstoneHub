@@ -84,7 +84,7 @@
          }
 
      });
-     requirejs.onError = function (err) {
+     requirejs.onError = function(err) {
          if (err.requireType === 'timeout') {
              // tell user
              if (!$) {
@@ -103,7 +103,7 @@
      };
      requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui'],
 
-     function ($, haml, np, not, nl, nlf, nt, hlj, qtip, jui) {
+     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
@@ -117,103 +117,160 @@
                  at: 'bottom center'
              }
          });
-         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function (utils, sammy, shaml, browser, markdow, mixitup) {
+         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
-             var addCss = function (url) {
+             var addCss = function(url) {
                  $('<link>').appendTo($('head')).attr({
                      type: 'text/css',
                      rel: 'stylesheet'
                  }).attr('href', url);
              };
              NProgress.inc();
-             var app = sammy('#main', function () {
+             var app = sammy('#main', function() {
                  var self = this;
                  self.use(shaml);
 
-                 self.get('/', function (context) {
+                 self.get('/', function(context) {
                      NProgress.inc();
-                     $.modskip = 0, $.modlimit = 10;
-                     $.ajax({
-                         type: "GET",
-                         url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
-                         error: function (err) {
-                             throw err;
-                         },
-                         success: function (mods) {
-                             var grid = $('#Grid');
-                             NProgress.inc();
-                             var content = '';
-                             $.each(mods, function (i) {
-                                 var mod = mods[i];
-                                 content += $.renderMod(mod);
 
-                             });
-                             context.swap(content, function () {
-                                 console.log('[INFO]Mixing...');
-                                 $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
-                                 $('.cart').on('click', function () {
-                                     var id = this.getAttribute('data-id');
-                                     $.cart.push(id);
+                     // Position in db
+                     $.modskip = 0, $.modlimit = 10;
+
+                     // Remember scroll distance from top
+                     $.scrollOffset = $.scrollOffset !== undefined ? $.scrollOffset : 0;
+
+                     // Avoid a loading before main load
+                     $.doLoad = false;
+
+                     // Load mods from AJAX only if they were not loaded before
+                     // Thus, when the usrer select a mod and go back,
+                     // It does not load the mods again, but keep the previous,
+                     // And go back where the user was in a second
+                     if ($.mods === undefined) {
+                         $.ajax({
+                             type: "GET",
+                             url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
+                             error: function(err) {
+                                 throw err;
+                             },
+                             success: function(mods) {
+
+                                 // Create the mods if they do not exists
+                                 $.mods = $.mods !== undefined ? $.mods : mods;
+
+                                 NProgress.inc();
+                                 var content = $.addMods(mods);
+                                 context.swap(content, function() {
+                                     $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
+
+                                     // Create doLoad and more if undefined
+                                     $.more = $.more != undefined ? $.more : true;
+                                     $.doLoad = true;
+
+                                     // It's done
+                                     NProgress.done();
 
                                  });
-                                 $.doLoad = true;
-                                 $(window).scroll(function () {
-                                     if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-                                         if ($.doLoad === true) {
-                                             $.doLoad = false;
-                                             $('#main').append($.loader);
-                                             $.modskip += 10;
-                                             $.ajax({
-                                                 type: "GET",
-                                                 url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
-                                                 error: function (err) {
-                                                     throw err;
-                                                 },
-                                                 success: function (mods) {
-                                                     $('#main #loader').remove();
-                                                     $.each(mods, function (i) {
-                                                         var mod = mods[i];
-                                                         $('#main').append($.renderMod(mod));
+                             }
+                         });
+                     }
+                     else {
+                         // load the previous mods
+                         var content = $.addMods($.mods);
 
-                                                     });
+                         // Swapping mods
+                         context.swap(content, function() {
+                             $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
 
-                                                 }
-                                             });
-                                             setTimeout(function () {
-                                                 $.doLoad = true;
-                                             }, 1500);
+                             // Create doLoad and more if undefined
+                             $.doLoad = true;
+                             $.more = $.more != undefined ? $.more : true;
+
+                             // It's done
+                             NProgress.done();
+
+                             // Scroll
+                             $.scroll().scrollTop($.scrollOffset);
+                         });
+
+                     }; // Load more when reached bottom
+                     $(window).scroll(function() {
+                         if ($.app.getLocation() === '/') {
+                             // Write scrollTop
+                             $.scrollOffset = $.scroll().scrollTop();
+                         }
+                         if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+
+                             // Check wether they are more mods to be loaded AND the previous load has happened after a delay
+                             if ($.doLoad === true && $.more === true && $.app.getLocation() === '/') {
+                                 // no new loads
+                                 $.doLoad = false;
+
+                                 // Append the ellipses
+                                 $('#main').append($.loader);
+
+                                 // Load only the 10 next mods
+                                 $.modskip += 10;
+
+                                 // AJAX Load
+                                 $.ajax({
+                                     type: "GET",
+                                     url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
+                                     error: function(err) {
+                                         throw err;
+                                     },
+                                     success: function(mods) {
+
+                                         // Remove all the loader
+                                         $('#main #loader').remove();
+
+                                         // Is there any mod ?
+                                         if (mods.length > 0) {
+
+                                             //If so load the mods
+                                             $('#main').append($.addMods(mods));
+                                             $.mods = $.mods.concat(mods);
                                          }
+                                         else {
+
+                                             // Otherwise stop loading defintly
+                                             console.log('No more mods');
+                                             $.more = false;
+                                         }
+
                                      }
                                  });
-
-                                 NProgress.done();
-
-                             });
+                                 // Wait a delay before allow next load
+                                 setTimeout(function() {
+                                     $.doLoad = true;
+                                 }, 1500);
+                             }
                          }
                      });
-
-
                  });
 
-                 self.get('/view/:id', function () {
+                 self.get('/view/:id', function() {
+
                      NProgress.start();
+
+
                      var id = this.params['id'];
                      var self = this;
                      $.ajax({
                          type: "GET",
                          url: "/ajax/info/?id=" + id,
-                         error: function (err) {
+                         error: function(err) {
                              throw err;
                          },
-                         success: function (mod) {
+                         success: function(mod) {
                              var html = markdown.toHTML(mod.description);
                              NProgress.inc()
                              mod.htmldesc = html;
-                             self.partial('/app/templates/mod.haml', mod, function () {
+                             self.partial('/app/templates/mod.haml', mod, function() {
                                  NProgress.inc();
                                  addCss('/app/lib/highlight.js/styles/tomorrow-night-eighties.css');
                                  // addCss('/components/tabulous/demo/src/tabulous.css');
-                                 $('pre code').each(function (i, e) {
+                                 $('pre code').each(function(i, e) {
                                      var code = hljs.highlightAuto($(this).html()).value;
                                      console.log(code);
                                      $(this).html(code);
@@ -229,13 +286,13 @@
 
                  });
 
-                 self.get('/edit/:id', function (context) {
+                 self.get('/edit/:id', function(context) {
                      NProgress.inc();
                      var self = this;
                      require([],
 
-                     function () {
-                         self.partial('/app/templates/edit.haml', undefined, function () {
+                     function() {
+                         self.partial('/app/templates/edit.haml', undefined, function() {
 
 
                              NProgress.done();
@@ -244,10 +301,10 @@
                      });
                  });
 
-                 self.get('/upload', function (context) {
+                 self.get('/upload', function(context) {
                      console.log('Upload');
                      //self.setTitle('Upload a new mod - Open Cubes');
-                     this.partial('app/templates/upload.haml', function () {
+                     this.partial('app/templates/upload.haml', function() {
 
                          NProgress.inc();
                          $('#main').css({
@@ -255,7 +312,7 @@
                          });
                          addCss('/components/jquery-dropkick2/dropkick.css');
                          $('#epiceditor').height(500);
-                         requirejs(["EpicEditor", "markdown", "ladda", "autosize"], function (eeditor, markd, Ladda, as) {
+                         requirejs(["EpicEditor", "markdown", "ladda", "autosize"], function(eeditor, markd, Ladda, as) {
                              NProgress.inc();
                              NProgress.inc();
                              var editor;
@@ -263,7 +320,7 @@
 
                              //$('.select').dropkick();
                              $('textarea').autosize();
-                             $("#submit").unbind('click').on("click", function (event) {
+                             $("#submit").unbind('click').on("click", function(event) {
                                  event.preventDefault();
                                  console.log('hi');
                                  var form = $('form').serializeObject();
@@ -281,18 +338,18 @@
                                          form: JSON.stringify(form)
                                      },
                                      dataType: 'json',
-                                     success: function (data) {
+                                     success: function(data) {
                                          console.log(data)
                                          if (data.Status === 'Error') {
                                              switch (data.ErrorType) {
                                              case 'InvalidData':
-                                                 $.each(data, function (i, v) {
+                                                 $.each(data, function(i, v) {
                                                      var e = $('[name="' + v.property + '"]');
                                                      e.addClass('invalid');
                                                  });
                                                  $.scroll().scrollTop(1);
-                                                 setTimeout(function () {
-                                                     $.each(data, function (i, v) {
+                                                 setTimeout(function() {
+                                                     $.each(data, function(i, v) {
                                                          var e = $('[name="' + v.property + '"]');
                                                          e.removeClass('invalid');
                                                      });
@@ -312,13 +369,13 @@
                                                  type: 'success',
                                                  layout: 'bottomLeft'
                                              });
-                                           //  context.redirect('view/' + data.DataId);
+                                             //  context.redirect('view/' + data.DataId);
                                          }
                                          // Stop loading
                                          l.stop();
 
                                      },
-                                     error: function (jqXHR, textStatus, err) {
+                                     error: function(jqXHR, textStatus, err) {
                                          alert('text status ' + textStatus + ', err ' + err);
                                          // Stop loading
                                          l.stop();
@@ -361,13 +418,13 @@
                                  },
                                  autogrow: true
                              });
-                             editor.load(function () { //editor.preview();
+                             editor.load(function() { //editor.preview();
                                  $('#main').animate({
                                      'opacity': '1'
                                  });
 
                                  NProgress.done();
-                                 editor.reflow(function () {
+                                 editor.reflow(function() {
                                      $.scroll().scrollTop(0);
                                  })
                              });
@@ -377,10 +434,13 @@
                      });
                  });
 
-
-
+                 // Scroll to top on each route
+                 self.around(function(callback) {
+                     $.scroll().scrollTop(0);
+                     callback();
+                 });
              });
-
+             $.app = app;
              app.run();
 
          });
