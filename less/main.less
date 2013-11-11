@@ -270,6 +270,54 @@ aside {
         font-size: 20px;
     }
 }
+#cart-content {
+    position: fixed;
+    
+    top: auto;
+    bottom: auto;
+    right: 0px;
+    
+    padding: 20px;
+    
+    height: 60%;
+    width: 15%;
+    
+    .border-radius(5px 0 0 5px);
+    background-color: lighten(@main_bg, 10%);
+
+    ul, h3, li, h4, h2 {
+        list-style: none;
+        background-color: lighten(@main_bg, 10%);
+        color: @text_color;
+    }
+    ul {
+        max-height: 85%;
+        overflow-y: auto;
+    }
+    h3 {
+        margin-bottom: 20px;
+    }
+    li {
+        margin: 10px;
+        
+        &.item {
+            div.sum {
+                margin-bottom: 5px;
+                width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+            
+            }
+            a {
+                color: @text_color;
+            }
+        }
+        &.emptycart {
+            font-style: italic;
+            color: darken(@text_color, 20%);
+        }
+    }
+}
 // VIEW
 .back {
     color: @text_color;

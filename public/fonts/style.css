@@ -211,6 +211,12 @@
 .icon-cart2:before {
 	content: "\20ac";
 }
+.icon-remove:before {
+	content: "\7e";
+}
 .icon-code-fork:before {
 	content: "\a4";
+}
+.icon-star:before {
+	content: "\e600";
 }

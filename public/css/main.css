@@ -374,6 +374,54 @@ aside .current {
   margin-left: 10px;
   font-size: 20px;
 }
+#cart-content {
+  position: fixed;
+  top: auto;
+  bottom: auto;
+  right: 0px;
+  padding: 20px;
+  height: 60%;
+  width: 15%;
+  -webkit-border-radius: 5px 0 0 5px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 5px 0 0 5px;
+  -moz-background-clip: padding;
+  border-radius: 5px 0 0 5px;
+  background-clip: padding-box;
+  background-color: #2e6078;
+}
+#cart-content ul,
+#cart-content h3,
+#cart-content li,
+#cart-content h4,
+#cart-content h2 {
+  list-style: none;
+  background-color: #2e6078;
+  color: #f0fff6;
+}
+#cart-content ul {
+  max-height: 85%;
+  overflow-y: auto;
+}
+#cart-content h3 {
+  margin-bottom: 20px;
+}
+#cart-content li {
+  margin: 10px;
+}
+#cart-content li.item div.sum {
+  margin-bottom: 5px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#cart-content li.item a {
+  color: #f0fff6;
+}
+#cart-content li.emptycart {
+  font-style: italic;
+  color: #8affb9;
+}
 .back {
   color: #f0fff6;
   font-size: 18px;

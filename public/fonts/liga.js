@@ -84,6 +84,7 @@
 			'blocked': '&#x7b;',
 			'cartfill': '&#xe0;',
 			'cartempty': '&#x20ac;',
+			'trash': '&#x7e;',
 			'fork': '&#xa4;',
 			'0': 0
 		};

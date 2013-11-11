@@ -21,7 +21,8 @@
              'sammy.title': 'sammy/lib/plugins/sammy.title',
              'haml': 'haml/lib/haml',
              'browser': 'jquery.browser/jquery.browser.min',
-             'utils': '../../app/scripts/utils',
+             'utils': '/app/scripts/utils',
+             'cart': '/app/scripts/cart',
              'highlight': '../../app/lib/highlight.js/highlight.pack',
              'autosize': 'jquery-autosize/jquery.autosize.min',
              'nprogress': 'nprogress/nprogress',
@@ -33,7 +34,8 @@
              'imagesloaded': '../../app/lib/qtip/imagesloaded.min',
              'eventEmitter': 'eventEmitter/EventEmitter.min',
              'eventie': 'eventie/eventie',
-             'canvas-loader': '/app/lib/heartcode-canvasloader-min'
+             'canvas-loader': '/app/lib/heartcode-canvasloader-min',
+             'cookie': 'jquery.cookie/jquery.cookie'
          },
          shim: {
              dropkick: {
@@ -81,6 +83,9 @@
              'qtip2': {
                  deps: ['jquery']
              },
+             'cookie': {
+                 deps: ['jquery']
+             }
          }
 
      });
@@ -101,9 +106,8 @@
              throw err;
          }
      };
-     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui'],
-
-     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui) {
+     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui', 'cookie'],
+                function(  $,  haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
@@ -117,7 +121,7 @@
                  at: 'bottom center'
              }
          });
-         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
+         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils,sammy, shaml, browser, markdow, mixitup) {
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
              var addCss = function(url) {
                  $('<link>').appendTo($('head')).attr({
@@ -128,6 +132,8 @@
              NProgress.inc();
              var app = sammy('#main', function() {
                  var self = this;
+                 
+                 // Add sammy.haml
                  self.use(shaml);
 
                  self.get('/', function(context) {
@@ -167,9 +173,11 @@
                                      $.more = $.more != undefined ? $.more : true;
                                      $.doLoad = true;
 
+                                     // Trigger mods:loaded event
+                                     self.trigger('mods:loaded', {});
+                                     
                                      // It's done
                                      NProgress.done();
-
                                  });
                              }
                          });
@@ -186,6 +194,8 @@
                              $.doLoad = true;
                              $.more = $.more != undefined ? $.more : true;
 
+                             self.trigger('mods:loaded', {});
+                             
                              // It's done
                              NProgress.done();
 
@@ -230,6 +240,8 @@
                                              //If so load the mods
                                              $('#main').append($.addMods(mods));
                                              $.mods = $.mods.concat(mods);
+                                             self.trigger('mods:loaded', {});
+                             
                                          }
                                          else {
 
@@ -243,7 +255,7 @@
                                  // Wait a delay before allow next load
                                  setTimeout(function() {
                                      $.doLoad = true;
-                                 }, 1500);
+                                 }, 1000);
                              }
                          }
                      });
@@ -433,7 +445,56 @@
 
                      });
                  });
+                
+                 self.bind('mods:loaded', function(event, data) {
+                    $('.cart').unbind('click').bind('click', function(event) {
+                        $.cart.put(this.getAttribute('data-id'));
+                    });
+                 });
+                 self.bind('cart', function (event, data) {
+                     
+                     switch(data.verb) {
+                         
+                         case 'PUT':
+                             var token = Date.now();
+                             var content = '<li class="item '+ token + '" data-id="'+data.mod_id+'..." ><h4>Adding mod...'+
+                             '</h5><div>Please wait...</div></li>'
+                             $('ul#cartitems').append(content);
+                             $('.emptycart').remove();
+                             $('#cartcount').html($.cart.items.length);
+                             $.ajax({
+                                 type: "GET",
+                                 url: "/ajax/info/?id=" + data.mod_id,
+                                 success: function(mod) {
+                                     var content = '<li class="item" data-id="' + data.mod_id + '" >'+
+                                                        '<div class="cartiteminfo">'+
+                                                            '<h4>'+mod.name+'</h4>'+
+                                                            '<div class="sum">'+mod.summary+'</div>'+
+                                                        '</div>'+
+                                                        '<a href="#" data-icon="info" class=".infomod" data-id="'+data.mod_id+'"></a>'+
+                                                        '<a href="#" data-icon="warning" class=".warningmod" data-id="'+data.mod_id+'"></a>'+
+                                                        '<a href="#" data-icon="trash" class=".removemod" data-id="'+data.mod_id+'" onclick="$.cart.remove(\''+data.mod_id+'\');"></a>'+
+                                                    '</li>';
+                                     $('ul#cartitems').append(content);
+                                     $('.'+token).remove();
+                             
+                                 }
+                             });
 
+                             break;
+                             
+                         case 'DEL':
+                             $('li.item[data-id='+data.mod_id+']').remove();
+                             break;
+                             
+                         case 'DOWNLOAD':
+                             break;
+                             
+                         case 'CLEAR':
+                             break;
+                             
+                     }
+                 });
                  // Scroll to top on each route
                  self.around(function(callback) {
                      $.scroll().scrollTop(0);
@@ -441,6 +502,9 @@
                  });
              });
              $.app = app;
+             require(['cart'], function(cart) {
+                 $.cart.load();
+             })
              app.run();
 
          });

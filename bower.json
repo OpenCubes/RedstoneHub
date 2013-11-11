@@ -25,6 +25,7 @@
     "tabulous": "https://github.com/aarondo/tabulous.js.git",
     "jquery-file-upload": "~9.0.1",
     "eventEmitter": "~4.2.5",
-    "eventie": "~1.0.3"
+    "eventie": "~1.0.3",
+    "jquery.cookie": "~1.4.0"
   }
 }
