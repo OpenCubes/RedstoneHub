@@ -35,7 +35,8 @@
              'eventEmitter': 'eventEmitter/EventEmitter.min',
              'eventie': 'eventie/eventie',
              'canvas-loader': '/app/lib/heartcode-canvasloader-min',
-             'cookie': 'jquery.cookie/jquery.cookie'
+             'cookie': 'jquery.cookie/jquery.cookie',
+             'socketio': '//minecrafthub-c9-vinz243.c9.io/socket.io/socket.io',
          },
          shim: {
              dropkick: {
@@ -85,7 +86,11 @@
              },
              'cookie': {
                  deps: ['jquery']
-             }
+             },
+             'socketio': {
+                 exports: 'io',
+                 wrap: false
+             },
          }
 
      });
@@ -107,7 +112,8 @@
          }
      };
      requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui', 'cookie'],
-                function(  $,  haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake) {
+
+     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
@@ -121,7 +127,7 @@
                  at: 'bottom center'
              }
          });
-         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils,sammy, shaml, browser, markdow, mixitup) {
+         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
              var addCss = function(url) {
                  $('<link>').appendTo($('head')).attr({
@@ -132,7 +138,7 @@
              NProgress.inc();
              var app = sammy('#main', function() {
                  var self = this;
-                 
+
                  // Add sammy.haml
                  self.use(shaml);
 
@@ -175,7 +181,7 @@
 
                                      // Trigger mods:loaded event
                                      self.trigger('mods:loaded', {});
-                                     
+
                                      // It's done
                                      NProgress.done();
                                  });
@@ -195,7 +201,7 @@
                              $.more = $.more != undefined ? $.more : true;
 
                              self.trigger('mods:loaded', {});
-                             
+
                              // It's done
                              NProgress.done();
 
@@ -241,7 +247,7 @@
                                              $('#main').append($.addMods(mods));
                                              $.mods = $.mods.concat(mods);
                                              self.trigger('mods:loaded', {});
-                             
+
                                          }
                                          else {
 
@@ -289,6 +295,57 @@
                                  });
                                  $('#tabs').tabs();
                                  NProgress.done();
+                                 $('#submit-file').off('click').on('click', function() {
+                                     require(['socketio'], function(io) {
+                                         
+                                         var socket = io.connect();
+                                         if (document.getElementById('file-name').value != "") {
+                                             var FReader = new FileReader();
+                                             var Name = document.getElementById('file-name').value;
+                                             var Content = "<span id='NameArea'>Uploading " + $.SelectedFile.name + " as " + Name + "</span>";
+                                             Content += '<div id="ProgressContainer"><div id="ProgressBar"></div></div><span id="percent">0%</span>';
+                                             Content += "<span id='Uploaded'> - <span id='MB'>0</span>/" + Math.round($.SelectedFile.size / 1048576) + "MB</span>";
+                                             document.getElementById('files').innerHTML = Content;
+                                             FReader.onload = function(evnt) {
+                                                 socket.emit('Upload', {
+                                                     'Name': Name,
+                                                     Data: evnt.target.result,
+                                                     action: 'add',
+                                                     path: $('#file-name').val(),
+                                                     modid: mod._id
+                                                 });
+                                             }
+                                             socket.emit('Start', {
+                                                 'Name': Name,
+                                                 'Size': $.SelectedFile.size
+                                             });
+                                             socket.on('MoreData', function(data) {
+                                                 UpdateBar(data['Percent']);
+                                                 var Place = data['Place'] * 524288; //The Next Blocks Starting Position
+                                                 var NewFile; //The Variable that will hold the new Block of Data
+                                                 if ($.SelectedFile.slice) NewFile = $.SelectedFile.slice(Place, Place + Math.min(524288, ($.SelectedFile.size - Place)));
+                                                 else NewFile = $.SelectedFile.mozSlice(Place, Place + Math.min(524288, ($.SelectedFile.size - Place)));
+                                                 FReader.readAsBinaryString(NewFile);
+                                             });
+                                 
+                                             function UpdateBar(percent) {
+                                                 document.getElementById('ProgressBar').style.width = percent + '%';
+                                                 document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
+                                                 var MBDone = Math.round(((percent / 100.0) * $.SelectedFile.size) / 1048576);
+                                                 document.getElementById('MB').innerHTML = MBDone;
+                                             }
+                                         }
+                                         else {
+                                             alert("Please Select A File");
+                                         }
+                                 
+                                     });
+                                 });
+                                 $('#file-file').off('change').on('change', function(evnt) {
+                                 
+                                     $.SelectedFile = evnt.target.files[0];
+                                     $('#file-name').val($.SelectedFile.name);
+                                 });
 
                              });
 
@@ -445,54 +502,45 @@
 
                      });
                  });
-                
-                 self.bind('mods:loaded', function(event, data) {
-                    $('.cart').unbind('click').bind('click', function(event) {
-                        $.cart.put(this.getAttribute('data-id'));
-                    });
-                 });
-                 self.bind('cart', function (event, data) {
-                     
-                     switch(data.verb) {
-                         
-                         case 'PUT':
-                             var token = Date.now();
-                             var content = '<li class="item '+ token + '" data-id="'+data.mod_id+'..." ><h4>Adding mod...'+
-                             '</h5><div>Please wait...</div></li>'
-                             $('ul#cartitems').append(content);
-                             $('.emptycart').remove();
-                             $('#cartcount').html($.cart.items.length);
-                             $.ajax({
-                                 type: "GET",
-                                 url: "/ajax/info/?id=" + data.mod_id,
-                                 success: function(mod) {
-                                     var content = '<li class="item" data-id="' + data.mod_id + '" >'+
-                                                        '<div class="cartiteminfo">'+
-                                                            '<h4>'+mod.name+'</h4>'+
-                                                            '<div class="sum">'+mod.summary+'</div>'+
-                                                        '</div>'+
-                                                        '<a href="#" data-icon="info" class=".infomod" data-id="'+data.mod_id+'"></a>'+
-                                                        '<a href="#" data-icon="warning" class=".warningmod" data-id="'+data.mod_id+'"></a>'+
-                                                        '<a href="#" data-icon="trash" class=".removemod" data-id="'+data.mod_id+'" onclick="$.cart.remove(\''+data.mod_id+'\');"></a>'+
-                                                    '</li>';
-                                     $('ul#cartitems').append(content);
-                                     $('.'+token).remove();
-                             
-                                 }
-                             });
 
-                             break;
-                             
-                         case 'DEL':
-                             $('li.item[data-id='+data.mod_id+']').remove();
-                             break;
-                             
-                         case 'DOWNLOAD':
-                             break;
-                             
-                         case 'CLEAR':
-                             break;
-                             
+                 self.bind('mods:loaded', function(event, data) {
+                     $('.cart').unbind('click').bind('click', function(event) {
+                         $.cart.put(this.getAttribute('data-id'));
+                     });
+                 });
+                 self.bind('cart', function(event, data) {
+
+                     switch (data.verb) {
+
+                     case 'PUT':
+                         var token = Date.now();
+                         var content = '<li class="item ' + token + '" data-id="' + data.mod_id + '..." ><h4>Adding mod...' + '</h5><div>Please wait...</div></li>'
+                         $('ul#cartitems').append(content);
+                         $('.emptycart').remove();
+                         $('#cartcount').html($.cart.items.length);
+                         $.ajax({
+                             type: "GET",
+                             url: "/ajax/info/?id=" + data.mod_id,
+                             success: function(mod) {
+                                 var content = '<li class="item" data-id="' + data.mod_id + '" >' + '<div class="cartiteminfo">' + '<h4>' + mod.name + '</h4>' + '<div class="sum">' + mod.summary + '</div>' + '</div>' + '<a href="#" data-icon="info" class=".infomod" data-id="' + data.mod_id + '"></a>' + '<a href="#" data-icon="warning" class=".warningmod" data-id="' + data.mod_id + '"></a>' + '<a href="#" data-icon="trash" class=".removemod" data-id="' + data.mod_id + '" onclick="$.cart.remove(\'' + data.mod_id + '\');"></a>' + '</li>';
+                                 $('ul#cartitems').append(content);
+                                 $('.' + token).remove();
+
+                             }
+                         });
+
+                         break;
+
+                     case 'DEL':
+                         $('li.item[data-id=' + data.mod_id + ']').remove();
+                         break;
+
+                     case 'DOWNLOAD':
+                         break;
+
+                     case 'CLEAR':
+                         break;
+
                      }
                  });
                  // Scroll to top on each route
