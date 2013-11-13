@@ -20,6 +20,8 @@
         %span.info> 52
       %span.label{data-icon: "bubbles"} comments
         %span.info> 52
+#actions
+  %a#edit Edit this mod
 #tabs
   %ul
     %li
@@ -27,13 +29,20 @@
     %li
       %a{href: "#features"} Features
     %li
-      %a{href: "#medias"} Images and videos
+      %a{href: "#medias"} Medias
     %li
       %a{href: "#comments"} Comments
     %li
       %a{href: "#changelog"} Changelog
+    %li
+      %a{href: "#files"} Files
   #tabs_container
     .desc#desc
       .main-desc= htmldesc
     .changelog#changelog
       .main-cl v1.0
+    .files#files
+      %input#file-file{type: "file"}
+      %label Name :
+      %input#file-name{type: "text"}
+      %a#submit-file Upload

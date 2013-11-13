@@ -3,6 +3,13 @@
      Schema = mongoose.Schema;
  var db = mongoose.connect(config.db_uri, config.db_opt);
  if (!db) console.log('error while connecting');
+ 
+ var fileSchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     path: String,
+     
+ });
+ 
  var modSchema = new mongoose.Schema({
 
      name: String,
@@ -26,6 +33,7 @@
          type: Schema.Types.ObjectId,
          ref: 'stars'
      },
+     files: [fileSchema]
 
  });
 
@@ -42,6 +50,7 @@
          ref: 'userauths'
      }
  });
+ 
  var passportLocalMongoose = require('./local');
 
  var User = new mongoose.Schema({});
@@ -52,4 +61,5 @@
  exports.mod = db.model('mods', modSchema);
  exports.stars = db.model('stars', starSchema);
  exports.category = db.model('categories', categorySchema);
- exports.mongoose = Schema;
+ exports.files = db.model('files', categorySchema);
+ exports.mongoose = mongoose;
