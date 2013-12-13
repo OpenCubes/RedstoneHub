@@ -1,0 +1,14 @@
+{
+  "name": "EpicEditor",
+  "homepage": "https://github.com/OscarGodson/EpicEditor",
+  "version": "0.2.2",
+  "_release": "0.2.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.2.2",
+    "commit": "74760f4e6de7ea9c9b3749b9511cd1f8ba94109c"
+  },
+  "_source": "git://github.com/OscarGodson/EpicEditor.git",
+  "_target": "~0.2.2",
+  "_originalSource": "EpicEditor"
+}

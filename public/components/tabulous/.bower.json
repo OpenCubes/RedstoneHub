@@ -1,0 +1,13 @@
+{
+  "name": "tabulous",
+  "homepage": "https://github.com/aarondo/tabulous.js",
+  "_release": "c90a870b12",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c90a870b12c82704cc3728d39b8a3251e40a0a3e"
+  },
+  "_source": "https://github.com/aarondo/tabulous.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/aarondo/tabulous.js.git"
+}
