@@ -9,8 +9,17 @@
      path: String,
      
  });
- 
- var modSchema = new mongoose.Schema({
+  var starSchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     userid: Schema.Types.ObjectId,
+     
+ });
+ var  fileSchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     path: String,
+     
+ }); 
+var modSchema = new mongoose.Schema({
 
      name: String,
      version: String,
@@ -28,11 +37,8 @@
          type: Schema.Types.ObjectId,
          ref: 'categories'
      },
-
-     _stars_id: {
-         type: Schema.Types.ObjectId,
-         ref: 'stars'
-     },
+     voters: [starSchema],
+     vote_count: Number,
      files: [fileSchema]
 
  });

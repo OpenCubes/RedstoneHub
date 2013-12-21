@@ -1,31 +1,27 @@
 {
   "name": "OpenKubes",
   "version": "1.0.0",
-  "ignore": [
-    ".jshintrc",
-    "**/*.txt"
-  ],
   "dependencies": {
     "jquery": "~2.0.3",
     "sammy": "*",
-    "requirejs": "*",
+    "requirejs": "~2.1.9",
     "history.js": "*",
     "EpicEditor": "~0.2.2",
-    "markdown": "~0.5.0",
+    "markdown": "*",
     "mixitup": "~1.5.4",
     "qtip2": "*",
     "jquery-autosize": "~1.17.8",
     "Ladda": "*",
     "jquery-dropkick2": "~1.0.0",
-    "haml": "https://github.com/creationix/haml-js.git#7df30e5a2209317e576d158ca6c3f9ed55b72e4d",
-    "jquery.browser": "~0.0.3",
+    "haml": "https://github.com/Vinz243/haml-js.git",
+    "jquery.browser": "*",
     "sir-trevor-js": "~0.2.3",
-    "nprogress": "~0.1.2",
+    "nprogress": "*",
     "noty": "~2.1.0",
     "tabulous": "https://github.com/aarondo/tabulous.js.git",
     "jquery-file-upload": "~9.0.1",
     "eventEmitter": "~4.2.5",
-    "eventie": "~1.0.3",
-    "jquery.cookie": "~1.4.0"
+    "eventie": "*",
+    "jquery.cookie": "*"
   }
 }

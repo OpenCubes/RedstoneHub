@@ -36,9 +36,9 @@
 }
 
 /* Use the following CSS code if you want to have a class per icon */
-@nav_bg: #193441;
-@main_bg: lighten(@nav_bg, 5%);
-@text_color: #f0fff6;
+@nav_bg: #ffffff;
+@main_bg: #ffffff;
+@text_color: #1e1f1b;
 
 .flatshadow(){
     .box-shadow(~"inset -4px -4px 0px rgba(0, 0, 0,0.3)");
@@ -72,6 +72,26 @@ body {
     font-size:13px;
     background-color: @main_bg;
 }
+.screen {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: @nav_bg;
+    color: @text_color;
+    .text {
+        position: relative;
+        width: 20%;
+        height: 20%;
+        margin: 0 auto;
+        top: 40%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 40px;
+    }
+}
 #content {
 	width: 88%;
 	margin-left: auto;
@@ -86,7 +106,6 @@ h1 {
 }
 nav {
     background-color: @nav_bg;
-
     #menu {
         display: block;
         height: 50px;
@@ -97,15 +116,13 @@ nav {
         font-size: 18px;
 
         div {
-            display: block;
-            height: 100%;
             a {
                 display: inline-block;
                 height: 100%;
                 line-height: 50px;
                 padding-right: 10px;
                 padding-left: 10px;
-                color: #ffffff;
+                color: @text_color;
                 .stransition(background, 500ms, ease);
             &:hover {
                 background-color: lighten(@nav_bg, 15%);
@@ -127,30 +144,22 @@ nav {
 
 aside {
     display: block;
-    float:left;
     margin-top: 20px;
     height: 100px;
     font-size: 16px;
-    color: White;
+    color: @text_color;
     a {
         display: block;
     }
     #upload-mod {
         width: 100%;
+        margin-top: 50px;
         margin-bottom: 20px;
         padding: 10px;
-        .sradius(5px);
-        .flatshadow();
         text-align: center;
-        background-color: #333238;
         color: White;
         font-weight: bold;
-        .stransition(background, 500ms, ease);
-        &:hover {
-           background-color: @main_bg;
-        .stransition(background, 500ms, ease);
-        }
-        
+        font-size: 16px;
     }
     ul {
         margin-top: 20px;
@@ -168,8 +177,6 @@ aside {
 
 
 #main {
-    float: left;
-    width: 50%;
     margin-top: 30px;
     margin-left: 50px;
     margin-bottom: 50px;
@@ -228,30 +235,15 @@ aside {
     .actions {
         float: right;
         font-size: 16px;
-        //border: solid 1px darken(@text_color, 15%);
-        background-color: darken(@main_bg, 7.5%);
         color: @text_color;
         .border-radius(6px);
         div {
             padding: 10px;
         }
         .download {
-            .box-shadow(~"inset -4px 0 0px rgba(0, 0, 0,0.3)");
-            .stransition(all, 250ms, ease);
-            &:hover {
-                 .box-shadow(~"");
-                 .stransition(all, 250ms, ease);
-             }
         }
         .cart {
             cursor: pointer;
-            border-top: solid 1px darken(@main_bg, 12.5%);
-            .box-shadow(~"inset -4px -4px 0px rgba(0, 0, 0,0.3)");
-            .stransition(all, 250ms, ease);
-            &:hover {
-                 .box-shadow(~"");
-                 .stransition(all, 250ms, ease);
-             }
         }
     }
 }
@@ -280,7 +272,6 @@ aside {
     padding: 20px;
     
     height: 60%;
-    width: 15%;
     
     .border-radius(5px 0 0 5px);
     background-color: lighten(@main_bg, 10%);
@@ -364,7 +355,6 @@ aside {
     }
 }
 .desc {
-    margin-top: 50px;
     color: @text_color;
     h1 {
         font-weight: bold;
@@ -487,43 +477,4 @@ textarea {
     //background-color: #93929e;
     padding: 10px 10px 10px 10px;
 
-}
-input[type=submit]{
-    margin-top: 10px;
-    background-color: #1cd61c;
-    color: #ffffff;
-    border: solid 1px #1ba31b;
-    .sradius(5px);
-    .flatshadow();
-    font: Ubuntu;
-    text-shadow:1px 1px 4px rgba(0,0,0,0.5);
-    font-weight: bold;
-}
-.invalid {
-    border-color:#c74848;
-    .stransition(all, 500ms, ease);
-}
-input {
-    padding: 4px 12px;
-    background-color: rgba(0, 0, 0, 0);
-}
-input.iconified_input {
-    border: none;
-}
-input.iconified_input:focus {
-    border: none;
-    outline: none;
-}
-div.input_container {
-    border:1px solid #c2c2c2;
-    display: inline-block;
-    border-radius: 3px;
-}
-div.input_container .selected {
-    border:1px solid #8c8a8c;
-    box-shadow:inset 1px 1px 5px #c7c7c7;
-}
-.input_image {
-    padding-right: 5px;
-    font-family: iconminia;
 }

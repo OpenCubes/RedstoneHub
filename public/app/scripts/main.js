@@ -20,7 +20,7 @@
              'sammy.haml': 'sammy/lib/plugins/sammy.haml',
              'sammy.title': 'sammy/lib/plugins/sammy.title',
              'haml': 'haml/lib/haml',
-             'browser': 'jquery.browser/jquery.browser.min',
+             'browser': 'jquery.browser/dist/jquery.browser.min',
              'utils': '/app/scripts/utils',
              'cart': '/app/scripts/cart',
              'highlight': '../../app/lib/highlight.js/highlight.pack',
@@ -37,6 +37,8 @@
              'canvas-loader': '/app/lib/heartcode-canvasloader-min',
              'cookie': 'jquery.cookie/jquery.cookie',
              'socketio': '//minecrafthub-c9-vinz243.c9.io/socket.io/socket.io',
+             'vset': '/app/lib/jquery.vset',
+             'bootstrap': 'bootstrap/dist/js/bootstrap.min'
          },
          shim: {
              dropkick: {
@@ -91,6 +93,10 @@
                  exports: 'io',
                  wrap: false
              },
+             'vset': {
+                 deps: ['jquery']
+
+             }
          }
 
      });
@@ -111,22 +117,52 @@
              throw err;
          }
      };
-     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui', 'cookie'],
+     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui', 'cookie', 'vset', 'bootstrap'],
 
-     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake) {
+     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake, vset, bs) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
-         $('#login').qtip({
-             content: '<h2>Log In</h2><form action="/login" method="post"><div><label>Username</label><input name="username" type="text"></div><div><label>Password</label><input name="password" type="password"></div><div><input value="Log In" type="submit"></div></form>',
-             show: 'click',
-             hide: 'unfocus',
-             style: 'qtip-dark qtip-rounded',
-             position: {
-                 my: 'top center',
-                 at: 'bottom center'
-             }
+         $('#login').popover({
+             html: true,
+             content: '<form action="/login" method="post" role="form" id="login-form"><div class="input-group"><span class="input-group-addon" data-icon="u"></span><input type="text" class="form-control" placeholder="Username" name="username"></div><div class="input-group"><span class="input-group-addon" data-icon="l"></span><input type="password" class="form-control" placeholder="Password" name="password"></div><button type="submit" id="do-login" class="btn btn-default" onclick="return false">Submit</button></form>',
+             placement: 'bottom',
+             title: 'Login'
          });
+         $('#login').on('shown.bs.popover', function() {
+
+             $("#do-login").on("click", function(event) {
+                 event.preventDefault();
+                 var form = $('#login-form').serializeObject();
+
+                 $.ajax({
+                     url: '/login',
+                     type: 'POST',
+                     data: {
+                         username: form.username,
+                         password: form.password
+                     },
+                     dataType: 'json',
+                     success: function(data) {
+                         noty({
+                             text: 'Successfully logged in.',
+                             type: 'success',
+                             layout: 'bottomLeft'
+                         });
+                         $('#user').html('<a data-icon="u">Welcome ' + data.user.username + '</a><a id="logout" href="/logout">Logout</a>');
+                     },
+                     error: function(jqXHR, textStatus, err) {
+                         noty({
+                             text: 'Invalid username and password, please retry',
+                             type: 'error',
+                             layout: 'bottomLeft'
+                         })
+
+                     }
+                 });
+             });
+         });
+
          requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
              var addCss = function(url) {
@@ -179,11 +215,13 @@
                                      $.more = $.more != undefined ? $.more : true;
                                      $.doLoad = true;
 
+
                                      // Trigger mods:loaded event
                                      self.trigger('mods:loaded', {});
 
                                      // It's done
                                      NProgress.done();
+
                                  });
                              }
                          });
@@ -201,6 +239,7 @@
                              $.more = $.more != undefined ? $.more : true;
 
                              self.trigger('mods:loaded', {});
+                             self.trigger('load:done', {});
 
                              // It's done
                              NProgress.done();
@@ -247,6 +286,8 @@
                                              $('#main').append($.addMods(mods));
                                              $.mods = $.mods.concat(mods);
                                              self.trigger('mods:loaded', {});
+                                             self.trigger('load:done', {});
+
 
                                          }
                                          else {
@@ -295,9 +336,11 @@
                                  });
                                  $('#tabs').tabs();
                                  NProgress.done();
+                                 self.trigger('load:done', {});
+
                                  $('#submit-file').off('click').on('click', function() {
                                      require(['socketio'], function(io) {
-                                         
+
                                          var socket = io.connect();
                                          if (document.getElementById('file-name').value != "") {
                                              var FReader = new FileReader();
@@ -327,7 +370,7 @@
                                                  else NewFile = $.SelectedFile.mozSlice(Place, Place + Math.min(524288, ($.SelectedFile.size - Place)));
                                                  FReader.readAsBinaryString(NewFile);
                                              });
-                                 
+
                                              function UpdateBar(percent) {
                                                  document.getElementById('ProgressBar').style.width = percent + '%';
                                                  document.getElementById('percent').innerHTML = (Math.round(percent * 100) / 100) + '%';
@@ -338,11 +381,11 @@
                                          else {
                                              alert("Please Select A File");
                                          }
-                                 
+
                                      });
                                  });
                                  $('#file-file').off('change').on('change', function(evnt) {
-                                 
+
                                      $.SelectedFile = evnt.target.files[0];
                                      $('#file-name').val($.SelectedFile.name);
                                  });
@@ -365,6 +408,8 @@
 
 
                              NProgress.done();
+                             self.trigger('load:done', {});
+
 
                          });
                      });
@@ -507,7 +552,13 @@
                      $('.cart').unbind('click').bind('click', function(event) {
                          $.cart.put(this.getAttribute('data-id'));
                      });
+                     $(".screen").fadeOut(500);
                  });
+
+                 self.bind('load:done', function(event, data) {
+                     $(".screen").fadeOut(500);
+                 });
+
                  self.bind('cart', function(event, data) {
 
                      switch (data.verb) {
@@ -548,6 +599,7 @@
                      $.scroll().scrollTop(0);
                      callback();
                  });
+
              });
              $.app = app;
              require(['cart'], function(cart) {

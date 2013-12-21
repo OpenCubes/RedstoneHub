@@ -1,12 +1,14 @@
 {
   "name": "haml",
-  "homepage": "https://github.com/creationix/haml-js",
-  "_release": "7df30e5a22",
+  "homepage": "https://github.com/Vinz243/haml-js",
+  "version": "0.2.5",
+  "_release": "0.2.5",
   "_resolution": {
-    "type": "commit",
-    "commit": "7df30e5a2209317e576d158ca6c3f9ed55b72e4d"
+    "type": "version",
+    "tag": "v0.2.5",
+    "commit": "da58d28d416e513875b3b102b77e41082168d998"
   },
-  "_source": "https://github.com/creationix/haml-js.git",
-  "_target": "7df30e5a2209317e576d158ca6c3f9ed55b72e4d",
-  "_originalSource": "https://github.com/creationix/haml-js.git"
+  "_source": "https://github.com/Vinz243/haml-js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/Vinz243/haml-js.git"
 }

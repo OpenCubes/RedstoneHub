@@ -32,6 +32,6 @@
     "commit": "87b935a316518cee83f30899d7be2af8cd5cf018"
   },
   "_source": "git://github.com/rstacruz/nprogress.git",
-  "_target": "~0.1.2",
+  "_target": "*",
   "_originalSource": "nprogress"
 }

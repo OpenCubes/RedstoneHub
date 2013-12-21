@@ -42,7 +42,9 @@
     .changelog#changelog
       .main-cl v1.0
     .files#files
-      %input#file-file{type: "file"}
-      %label Name :
-      %input#file-name{type: "text"}
-      %a#submit-file Upload
+      %form{enctype: "multipart/form-data"}
+        %input#file-file{name: "file", type: "file"}/
+        %label Name :
+        %input#file-name{type: "text", name: "name"}
+        %input#submit-file{type: "button", value: "Upload"}/
+        %progress

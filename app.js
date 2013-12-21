@@ -6,7 +6,7 @@ var express = require('express'),
     routes = require('./routes'),
     user = require('./routes/user'),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+    io = require('socket.io')/*.listen(server)*/,
     path = require('path'),
     config = require('./config'),
     jade = require('jade'),
@@ -115,6 +115,7 @@ app.post('/register', function(req, res) {
 });
 
 app.get('/login', function(req, res) {
+
     res.render('login', {
         user: req.user
     });
@@ -159,8 +160,7 @@ app.post('/ajax/addmod/', function(req, res) {
             returnAllErrors: true
         });
         checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-        /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/
-        .add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+        /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
         checks.check({
             name: name,
             sum: sum,
@@ -270,7 +270,48 @@ app.get('/ajax/info/', function(req, res) {
         }
     });
 
-}); // AJAX ROUTE FOR MANAGING FILE
+});
+
+// AJAX ROUTE FOR STARRING MOD
+app.get('/ajax/star/', function(req, res) {
+    if (!req.user) {
+
+        res.status.unauthenticated();
+        return;
+    }
+    var modid = req.param('id');
+    var userid = req.user.id;
+    var query = Mod.findOne({
+        '_id': modid
+    });
+    query.exec(function(err, doc) {
+        if (err) {
+            res.status.internalServerError(err);
+        }
+        else {
+            if (doc.voters) for (var i = 0; i < doc.voters.length; i++) {
+                if (doc.voters[i].userid.equals(userid)) {
+                    res.status.conflict('Already starred');
+                    return;
+                }
+            }
+            else doc.voters = [];
+            doc.voters.push({userid: userid});
+            if(!doc.vote_count)
+                doc.vote_count = 0;
+            doc.vote_count++;
+            doc.save(function(err) {
+                if (err) {
+                    res.status.internalServerError(err);
+                    return;
+                }
+                res.status.accepted(doc);
+            });
+        }
+    });
+
+});
+// AJAX ROUTE FOR MANAGING FILE
 app.get('/ajax/files/manage/', function(req, res) {
     var modid = req.param('modid');
     var action = req.param('action');
@@ -352,7 +393,7 @@ app.get('/ajax/files/manage/', function(req, res) {
 
 });
 
-
+/*
 io.sockets.on('connection', function(socket) {
     socket.on('Start', function(data) { //data contains the variables that we passed through in the html file
         var Name = data['Name'];
@@ -420,7 +461,7 @@ io.sockets.on('connection', function(socket) {
         }
     });
 });
-
+*/
 
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));

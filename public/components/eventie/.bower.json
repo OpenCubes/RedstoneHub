@@ -11,7 +11,6 @@
     "commit": "1f43e215030d7b39be02311b49734d530ab85650"
   },
   "_source": "git://github.com/desandro/eventie.git",
-  "_target": "~1.0.3",
-  "_originalSource": "eventie",
-  "_direct": true
+  "_target": "*",
+  "_originalSource": "eventie"
 }

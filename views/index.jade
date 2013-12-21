@@ -1,10 +1,13 @@
 extends layout
 block scripts
   script(src="/components/requirejs/require.js",  data-main="/app/scripts/main.js")
+  
 block stylesheets
   //link(rel='stylesheet', href='/stylesheets/ladda.min.css')
   link(rel='stylesheet', href="/components/qtip2/jquery.qtip.min.css")
-  link(rel='stylesheet', href="/app/lib/jquery-ui/css/opencubes/jquery-ui-1.10.3.custom.min.css")
+  link(rel='stylesheet', href="/app/lib/jquery-ui/css/delta/jquery-ui.css")
+  link(rel='stylesheet', href="/app/css/bootstrap.min.css")
+  
 block navbar
   div#main-nav
     a(href="/",data-icon="home") Home
@@ -13,28 +16,32 @@ block navbar
   div#user
     if user
       a(data-icon="u") Welcome #{user.username}
-      a#logout(href="/logout", onclick="return false") Logout
+      a#logout(href="/logout") Logout
     else
       a(href="/register", data-icon="user") Register
-      a#login(href="/login", class="tooltip", title="", onclick="return false") Login
+      a#login(href="/login", title="", onclick="return false") Login
+      
 block content
+  div.screen 
+    div.text Loading...
   div(id="loader")
-  aside
-    a#upload-mod(data-icon="^",href="/upload") Upload a new mod
-    a.current Categories
-    #categories
-      a(class="filter", data-filter="mix_all") All
-      a(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
-      a(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
-      a(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
-      a(class="filter", data-filter="5254248c73494d4c9c000033") World
-      a(class="filter", data-filter="525425d673494d4c9c000049") Decoration
-      a(class="filter", data-filter="5254260348a94512d900001f") GUI
-      a(class="filter", data-filter="5254268171993abd0d00007a") Sounds
-      a(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
-  #cart-content
-    h2(data-icon="cartfill") Cart (<span id="cartcount">0</span> items)
-    ul#cartitems
-      li.emptycart There is no item yet
-  #main
-    ul(id="Grid")
+  div.row.row-offcanvas
+    aside.col-md-2
+      a#upload-mod.btn.btn-primary.btn-lg(data-icon="^",href="/upload") Upload a new mod
+      a.current Categories
+      #categories
+        a(class="filter", data-filter="mix_all") All
+        a(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
+        a(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
+        a(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
+        a(class="filter", data-filter="5254248c73494d4c9c000033") World
+        a(class="filter", data-filter="525425d673494d4c9c000049") Decoration
+        a(class="filter", data-filter="5254260348a94512d900001f") GUI
+        a(class="filter", data-filter="5254268171993abd0d00007a") Sounds
+        a(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
+    #main.col-md-6
+      ul(id="Grid")
+    #cart-content.col-md-2
+      h2(data-icon="cartfill") Cart (<span id="cartcount">0</span> items)
+      ul#cartitems
+        li.emptycart There is no item yet
