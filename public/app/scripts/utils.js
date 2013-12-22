@@ -60,7 +60,10 @@ $.renderMod = function(mod) {
     '<div class="cart btn btn-primary" data-id="' + mod._id + '" data-icon="cartfill">Add to cart</div>' + '</div>' +
     '<div class="modinfo">' + '<a href="/view/' + mod._id + '" class="view" data-id="' + mod._id + '" >' +
     '<h1 class="title">' + mod.name + '</h1>' + '<h6 class="summary text">' + sum + '</h6>' + '</a>' +
-    '<div class="links">' + '<a href="/demo/' + mod._id + '" id="demo demo_' + mod._id + '" data-id="' + mod._id + '" data-icon="play">demo</a> ' + '<a href="/view/' + mod._id + '" id="view view_' + mod._id + '" data-id="' + mod._id + '" data-icon="eye">view</a> ' + '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' + '<a onclick="star(\''+mod._id+'\')" href="/star/' + mod._id + '" id="star star_' + mod._id + '" data-id="' + mod._id + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
+    '<div class="links">' + '<a href="/demo/' + mod._id + '" id="demo demo_' + mod._id + '" data-id="' + mod._id + '" data-icon="play">demo</a> ' +
+    '<a href="/view/' + mod._id + '" id="view view_' + mod._id + '" data-id="' + mod._id + '" data-icon="eye">view</a> ' +
+    '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
+    '<a onclick="star(\''+mod._id+'\')" href="#" id="star star_' + mod._id + '" data-id="' + mod._id + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
 };
 $.addMods = function(mods) {
     var content = '';
@@ -96,6 +99,6 @@ logout = function(event) {
     });
 
 }
-star = function (id) {
-    
+var star = function (id) {
+    alert(id);
 }
