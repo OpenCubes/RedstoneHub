@@ -26,20 +26,23 @@ block content
   div.row.row-offcanvas
     aside.col-md-2
       a#upload-mod.btn.btn-primary.btn-lg(data-icon="^",href="/upload") Upload
-      a.current Categories
-      #categories
-        a(class="filter", data-filter="mix_all") All
-        a(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
-        a(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
-        a(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
-        a(class="filter", data-filter="5254248c73494d4c9c000033") World
-        a(class="filter", data-filter="525425d673494d4c9c000049") Decoration
-        a(class="filter", data-filter="5254260348a94512d900001f") GUI
-        a(class="filter", data-filter="5254268171993abd0d00007a") Sounds
-        a(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
+      ul#categories.list-group
+        a.list-group-item.active.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseCat') Categories
+        #collapseCat.panel-collapse.collapse
+          a.list-group-item(class="filter", data-filter="mix_all") All
+          a.list-group-item(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
+          a.list-group-item(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
+          a.list-group-item(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
+          a.list-group-item(class="filter", data-filter="5254248c73494d4c9c000033") World
+          a.list-group-item(class="filter", data-filter="525425d673494d4c9c000049") Decoration
+          a.list-group-item(class="filter", data-filter="5254260348a94512d900001f") GUI
+          a.list-group-item(class="filter", data-filter="5254268171993abd0d00007a") Sounds
+          a.list-group-item(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
+        a.list-group-item 
+          p.small.list-group-item-text Click above to expand
     #main.col-md-7
       ul(id="Grid")
     #cart-content.col-md-2
-      h2(data-icon="cartfill") Cart (<span id="cartcount">0</span> items)
+      strong(data-icon="cartfill") Cart <span class="badge" id="cartcount">0</span>
       ul#cartitems
         li.emptycart There is no item yet

@@ -166,7 +166,6 @@ aside {
         list-style: none;
         li  {
             list-style: none;
-            margin-left: 20px;
             cursor: pointer;
         }
     }
@@ -265,21 +264,25 @@ aside {
 #cart-content {
     position: fixed;
     
-    top: auto;
+    top: 30px;
     bottom: auto;
     right: 0px;
     
-    padding: 20px;
+    padding: 50px;
     
     height: 60%;
     
     .border-radius(5px 0 0 5px);
     background-color: lighten(@main_bg, 10%);
 
-    ul, h3, li, h4, h2 {
+    ul, h3, li, h4, h2, strong {
         list-style: none;
         background-color: lighten(@main_bg, 10%);
         color: @text_color;
+    }
+    strong  {
+        margin-top: 20px;
+        font-size: 20px;
     }
     ul {
         max-height: 85%;

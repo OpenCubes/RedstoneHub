@@ -116,3 +116,27 @@ logout = function(event) {
 var star = function (id) {
     alert(id);
 };
+
+// skip, limit, sort [, notify], callback
+$.loadMods = function(skip, limit, sort, notify, callback) {
+    if (typeof notify === "function") {
+        callback = notify;
+        notify = false;
+    }
+    $.ajax({
+        type: "GET",
+        url: '/ajax/getmods/?sort=' + (sort || 'date') + '&limit=' + limit + '&skip=' + skip,
+        error: function(err) {
+            throw err;
+        },
+        success: function(mods) {
+            // Create the mods if they do not exists
+            $.mods = $.mods !== undefined ? $.mods : mods;
+
+            if (callback) 
+                callback(mods);
+            
+
+        }
+    });
+};

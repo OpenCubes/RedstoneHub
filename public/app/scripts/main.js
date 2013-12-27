@@ -207,12 +207,14 @@
                  // Add sammy.haml
                  self.use(shaml);
 
-                 self.get('/', function(context) {
+                 self.get(/\#\/browse\/(.*)/, function(context) {
                      NProgress.inc();
 
                      // Position in db
                      $.modskip = 0, $.modlimit = 10;
-
+                     $.scrollOffset = $.scrollOffset !== undefined ? $.scrollOffset : 0;
+                     if(splat)
+                     $.sort = this.params['splat'] || '';
                      // Remember scroll distance from top
                      $.scrollOffset = $.scrollOffset !== undefined ? $.scrollOffset : 0;
 
@@ -221,38 +223,28 @@
 
                      // Load mods from AJAX only if they were not loaded before
                      // Thus, when the usrer select a mod and go back,
-                     // It does not load the mods again, but keep the previous,
+                     // It does not load the mods again, but keep the previouses,
                      // And go back where the user was in a second
                      if ($.mods === undefined) {
-                         $.ajax({
-                             type: "GET",
-                             url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
-                             error: function(err) {
-                                 throw err;
-                             },
-                             success: function(mods) {
-
-                                 // Create the mods if they do not exists
-                                 $.mods = $.mods !== undefined ? $.mods : mods;
-
-                                 NProgress.inc();
-                                 var content = $.addMods(mods);
-                                 context.swap(content, function() {
-                                     $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
-
-                                     // Create doLoad and more if undefined
-                                     $.more = $.more != undefined ? $.more : true;
-                                     $.doLoad = true;
-
-
-                                     // Trigger mods:loaded event
-                                     self.trigger('mods:loaded', {});
-
-                                     // It's done
-                                     NProgress.done();
-
-                                 });
-                             }
+                         $.loadMods($.modskip, $.modlimit, $.sort, true, function(mods) {
+                             NProgress.inc();
+                             var content = $.addMods(mods);
+                             context.swap(content, function() {
+                                 //$('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
+                     
+                                 // Create doLoad and more if undefined
+                                 $.more = $.more != undefined ? $.more : true;
+                                 $.doLoad = true;
+                     
+                     
+                                 // Trigger mods:loaded event
+                                 self.trigger('mods:loaded', {});
+                     
+                                 // It's done
+                                 NProgress.done();
+                     
+                     
+                             });
                          });
                      }
                      else {
@@ -261,7 +253,7 @@
 
                          // Swapping mods
                          context.swap(content, function() {
-                             $('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
+                             //$('#Grid').mixitup($.getJSON('app/config/mixitup.json'));
 
                              // Create doLoad and more if undefined
                              $.doLoad = true;
@@ -279,14 +271,14 @@
 
                      }; // Load more when reached bottom
                      $(window).scroll(function() {
-                         if ($.app.getLocation() === '/') {
+                         if ($.app.getLocation() === '/#/browse/'+$.sort) {
                              // Write scrollTop
                              $.scrollOffset = $.scroll().scrollTop();
                          }
                          if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
 
                              // Check wether they are more mods to be loaded AND the previous load has happened after a delay
-                             if ($.doLoad === true && $.more === true && $.app.getLocation() === '/') {
+                             if ($.doLoad === true && $.more === true && $.app.getLocation() === '/#/browse/'+$.sort) {
                                  // no new loads
                                  $.doLoad = false;
 
@@ -297,13 +289,8 @@
                                  $.modskip += 10;
 
                                  // AJAX Load
-                                 $.ajax({
-                                     type: "GET",
-                                     url: '/ajax/getmods/?sort=name&limit=' + $.modlimit + '&skip=' + $.modskip,
-                                     error: function(err) {
-                                         throw err;
-                                     },
-                                     success: function(mods) {
+                                $.loadMods($.modskip, $.modlimit, $.sort, function(mods) {
+                          
 
                                          // Remove all the loader
                                          $('#main #loader').remove();
@@ -326,9 +313,9 @@
                                              $.more = false;
                                          }
 
-                                     }
+                                     
                                  });
-                                 // Wait a delay before allow next load
+                                 // Wait a delay before allowing next load
                                  setTimeout(function() {
                                      $.doLoad = true;
                                  }, 1000);

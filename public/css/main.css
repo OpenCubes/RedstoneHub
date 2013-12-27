@@ -215,7 +215,6 @@ aside ul {
 }
 aside ul li {
   list-style: none;
-  margin-left: 20px;
   cursor: pointer;
 }
 aside .current {
@@ -314,10 +313,10 @@ aside .current {
 }
 #cart-content {
   position: fixed;
-  top: auto;
+  top: 30px;
   bottom: auto;
   right: 0px;
-  padding: 20px;
+  padding: 50px;
   height: 60%;
   -webkit-border-radius: 5px 0 0 5px;
   -webkit-background-clip: padding-box;
@@ -331,10 +330,15 @@ aside .current {
 #cart-content h3,
 #cart-content li,
 #cart-content h4,
-#cart-content h2 {
+#cart-content h2,
+#cart-content strong {
   list-style: none;
   background-color: #ffffff;
   color: #1e1f1b;
+}
+#cart-content strong {
+  margin-top: 20px;
+  font-size: 20px;
 }
 #cart-content ul {
   max-height: 85%;
