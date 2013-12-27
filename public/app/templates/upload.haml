@@ -1,27 +1,23 @@
-%form.form-container
-  %h4 Name
-  #general-info
-    %div
-      %input.form-field{name: "name", type: "text"}/
-      %span#legend Make it GOOD
-    #cat
-      %label Category
-      %select.select{name: "category", tabindex: "2"}
-        %option{value: "cheats"} Cheats
-        %option{value: "decoration"} Decoration
-        %option{value: "fixes"} Fixes
-        %option{value: "gameplay"} Gameplay
-        %option{value: "gui"} GUI
-        %option{value: "misc"} Misc
-        %option{value: "mobs"} Mobs
-        %option{value: "sounds"} Sounds
-        %option{value: "world"} World
-  %label.form-title
-    %h4 Summary
-  %textarea#desc.form-field{name: "sum"}
-  %label.form-title
-    %h4 Description
-  #epiceditor
-#send_bottom
-  %button#submit.ladda-button{"data-style" => "expand-right"}
-    %span.ladda-label Submit
+%form{role: "form"}
+  .form-group
+    %label{for: "modNameInput"} Mod Name
+    %input#modNameInput.form-control{placeholder: "Make it awesome !!!", type: "text", name: "name"}/
+  .form-group
+    %label{for: "modSumInput"} Summary
+    %textarea#modSumInput.form-control{placeholder: "Make it catchy : it will be displayed while browsing mods !!!", name: "sum"}
+  .form-group
+    %label{for: "modCategoryInput"} Category
+    %select#modCategoryInput.form-control.select.selectpicker{name: "category", tabindex: "2", data-style: "btn-primary"}
+      %option{value: "cheats"} Cheats
+      %option{value: "decoration"} Decoration
+      %option{value: "fixes"} Fixes
+      %option{value: "gameplay"} Gameplay
+      %option{value: "gui"} GUI
+      %option{value: "misc"} Misc
+      %option{value: "mobs"} Mobs
+      %option{value: "sounds"} Sounds
+      %option{value: "world"} World
+  .form-group
+    %label{for: "editor"} Complete description
+    %textarea#editor.form-control{name: "desc"}
+  %button.btn.btn-success.btn-lg#submit{type: "submit"} Submit

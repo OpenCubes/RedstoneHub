@@ -140,6 +140,13 @@ app.post('/login', passport.authenticate('local', {}), function(req, res) {
         user: req.user
     });
 });
+
+app.get('/isauth', function(req, res) {
+    res.send({
+        user: req.user
+    });
+});
+// AJAX
 // AJAX
 // AJAX ROUTE FOR ADDING MOD
 app.post('/ajax/addmod/', function(req, res) {
@@ -147,7 +154,6 @@ app.post('/ajax/addmod/', function(req, res) {
     if (user) {
         var enforce = require("enforce");
         var form = JSON.parse(req.body.form);
-        console.log(form);
         var name = form.name,
             sum = form.sum,
             desc = form.desc,

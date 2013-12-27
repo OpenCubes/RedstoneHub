@@ -3,9 +3,7 @@ block scripts
   script(src="/components/requirejs/require.js",  data-main="/app/scripts/main.js")
   
 block stylesheets
-  //link(rel='stylesheet', href='/stylesheets/ladda.min.css')
-  link(rel='stylesheet', href="/components/qtip2/jquery.qtip.min.css")
-  link(rel='stylesheet', href="/app/lib/jquery-ui/css/delta/jquery-ui.css")
+  link(rel='stylesheet', href="/app/lib/select/bootstrap-select.min.css")
   link(rel='stylesheet', href="/app/css/bootstrap.min.css")
   
 block navbar
@@ -27,7 +25,7 @@ block content
   div(id="loader")
   div.row.row-offcanvas
     aside.col-md-2
-      a#upload-mod.btn.btn-primary.btn-lg(data-icon="^",href="/upload") Upload a new mod
+      a#upload-mod.btn.btn-primary.btn-lg(data-icon="^",href="/upload") Upload
       a.current Categories
       #categories
         a(class="filter", data-filter="mix_all") All
@@ -39,7 +37,7 @@ block content
         a(class="filter", data-filter="5254260348a94512d900001f") GUI
         a(class="filter", data-filter="5254268171993abd0d00007a") Sounds
         a(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
-    #main.col-md-6
+    #main.col-md-7
       ul(id="Grid")
     #cart-content.col-md-2
       h2(data-icon="cartfill") Cart (<span id="cartcount">0</span> items)

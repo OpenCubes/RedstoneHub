@@ -39,7 +39,8 @@
              'socketio': '//minecrafthub-c9-vinz243.c9.io/socket.io/socket.io',
              'vset': '/app/lib/jquery.vset',
              'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-             'user': '/app/scripts/user'
+             'user': '/app/scripts/user',
+             'select': '/app/lib/select/bootstrap-select.min'
          },
          shim: {
              dropkick: {
@@ -96,11 +97,12 @@
              },
              'vset': {
                  deps: ['jquery']
-
              },
              'bootstrap': {
                  deps: ['jquery']
-
+             },
+             'select': {
+                 deps: ['jquery']
              }
          }
 
@@ -122,9 +124,9 @@
              throw err;
          }
      };
-     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'qtip2', 'jqueryui', 'cookie', 'vset', 'bootstrap'],
+     requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'cookie', 'bootstrap', 'select'],
 
-     function($, haml, np, not, nl, nlf, nt, hlj, qtip, jui, cake, vset, bs) {
+     function($, haml, np, not, nl, nlf, nt, hlj,  cake, bs) {
          $.cart = [];
          window.haml = haml;
          NProgress.start();
@@ -134,6 +136,29 @@
              placement: 'bottom',
              title: 'Login'
          });
+         
+         $.ajax({
+             url: '/isauth',
+             type: 'GET',
+             dataType: 'json',
+             success: function(data) {
+                 if (data.user) {
+                     noty({
+                         text: 'Welcome back, ' + data.user.username,
+                         type: 'success',
+                         layout: 'bottomLeft'
+                     });
+                     $.user = {
+                         logged: true,
+                         username: data.username
+                     };
+                 }
+             },
+             error: function(jqXHR, textStatus, err) {
+                console.log(err);
+             }
+         });
+         
          $('#login').on('shown.bs.popover', function() {
 
              $("#do-login").on("click", function(event) {
@@ -174,12 +199,7 @@
 
          requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
-             var addCss = function(url) {
-                 $('<link>').appendTo($('head')).attr({
-                     type: 'text/css',
-                     rel: 'stylesheet'
-                 }).attr('href', url);
-             };
+             
              NProgress.inc();
              var app = sammy('#main', function() {
                  var self = this;
@@ -336,14 +356,18 @@
                              mod.htmldesc = html;
                              self.partial('/app/templates/mod.haml', mod, function() {
                                  NProgress.inc();
-                                 addCss('/app/lib/highlight.js/styles/tomorrow-night-eighties.css');
+                                 addCss('/app/lib/highlight.js/styles/github.css');
                                  // addCss('/components/tabulous/demo/src/tabulous.css');
                                  $('pre code').each(function(i, e) {
                                      var code = hljs.highlightAuto($(this).html()).value;
                                      console.log(code);
                                      $(this).html(code);
                                  });
-                                 $('#tabs').tabs();
+                                 $('#tabs a').click(function(e) {
+                                     e.preventDefault()
+                                     $(this).tab('show')
+                                 })
+                                 
                                  NProgress.done();
                                  self.trigger('load:done', {});
 
@@ -365,7 +389,7 @@
 
                  self.get('/upload', function(context) {
                      require(['user'], function(usr) {
-                         upload();
+                         upload(context);
                      });
                  });
 

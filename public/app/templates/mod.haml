@@ -23,8 +23,8 @@
 #actions
   %a#edit Edit this mod
 #tabs
-  %ul
-    %li
+  %ul.nav.nav-tabs#tabs
+    %li.active
       %a{href: "#desc"} Description
     %li
       %a{href: "#features"} Features
@@ -36,12 +36,12 @@
       %a{href: "#changelog"} Changelog
     %li
       %a{href: "#files"} Files
-  #tabs_container
-    .desc#desc
+  #tabs_container.tab-content
+    .desc#desc.tab-pane.active
       .main-desc= htmldesc
-    .changelog#changelog
+    .changelog.tab-pane#changelog
       .main-cl v1.0
-    .files#files
+    .files.tab-pane#files
       %form{enctype: "multipart/form-data"}
         %input#file-file{name: "file", type: "file"}/
         %label Name :

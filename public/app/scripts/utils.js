@@ -14,6 +14,7 @@ $.fn.serializeObject = function() {
     });
     return o;
 };
+
 $.scroll = function() {
     navigator.sayswho = (function() {
         var N = navigator.appName,
@@ -46,6 +47,7 @@ $.scroll = function() {
     }
     return bodyelem;
 };
+
 $.renderMod = function(mod) {
     var sum = mod.summary;
     var l = mod.summary.length;
@@ -65,6 +67,7 @@ $.renderMod = function(mod) {
     '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
     '<a onclick="star(\''+mod._id+'\')" href="#" id="star star_' + mod._id + '" data-id="' + mod._id + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
 };
+
 $.addMods = function(mods) {
     var content = '';
     $.each(mods, function(i) {
@@ -72,7 +75,17 @@ $.addMods = function(mods) {
         content += $.renderMod(mod);
     });
     return content;
-}
+};
+
+addCss = function(url) {
+    $('<link>').appendTo($('head')).attr({
+        type: 'text/css',
+        rel: 'stylesheet'
+    }).attr('href', url);
+};
+
+$.addCss = addCss;
+
 logout = function(event) {
     event.preventDefault();
 
@@ -98,7 +111,8 @@ logout = function(event) {
         }
     });
 
-}
+};
+
 var star = function (id) {
     alert(id);
-}
+};
