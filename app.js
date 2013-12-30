@@ -82,7 +82,7 @@ var index = function(req, res) {
     });
 };
 // INDEX
-app.get('/:var(browse|upload)?', index);
+app.get('/:var((browse(/*)?)|upload)?', index);
 app.get('/view/:id', index);
 app.get('/edit/:id', index);
 // ADD MOD

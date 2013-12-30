@@ -65,6 +65,7 @@ $.renderMod = function(mod) {
     '<div class="links">' + '<a href="/demo/' + mod._id + '" id="demo demo_' + mod._id + '" data-id="' + mod._id + '" data-icon="play">demo</a> ' +
     '<a href="/view/' + mod._id + '" id="view view_' + mod._id + '" data-id="' + mod._id + '" data-icon="eye">view</a> ' +
     '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
+    '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
     '<a onclick="star(\''+mod._id+'\')" href="#" id="star star_' + mod._id + '" data-id="' + mod._id + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
 };
 
@@ -116,7 +117,53 @@ logout = function(event) {
 var star = function (id) {
     alert(id);
 };
+Array.prototype.clean = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {         
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
 
+$.makeURL = function(url, category, order) {
+
+    // foo/bar ==> [foo, bar]
+    var segments = url.split('/');
+    segments.clean('');
+    console.log(segments);
+    
+    var newurl, newcat, neworder;
+    switch(segments.length){
+        case 0:
+            // Then url is /
+            newcat = category || 'all';
+            neworder = order || '';
+            break;
+        case 1:
+            // Then url is browse/
+            newcat = category || 'all';
+            neworder = order || '';
+            break;
+        case 2:
+            // Then url is bowse/catgeory
+            newcat = category || segments[1];
+            neworder = order || '';
+            break;
+        case 3:
+            // then url is browse/category/order
+            // Then url is bowse/catgeory
+            newcat = category || segments[1];
+            neworder = order || segments[2];
+            break;
+        default:
+            console.log('WTF?');
+    }
+    newurl = '/browse/'+newcat+'/'+neworder;
+    console.log(newurl);
+    return newurl;
+};
 // skip, limit, sort [, notify], callback
 $.loadMods = function(skip, limit, sort, notify, callback) {
     if (typeof notify === "function") {

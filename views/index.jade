@@ -27,19 +27,33 @@ block content
     aside.col-md-2
       a#upload-mod.btn.btn-primary.btn-lg(data-icon="^",href="/upload") Upload
       ul#categories.list-group
-        a.list-group-item.active.collapsed(data-toggle='collapse', data-parent='#accordion', href='#collapseCat') Categories
+        a.list-group-item.active.collapsed(data-toggle='collapse', data-parent='#categories', href='#collapseCat') Categories
         #collapseCat.panel-collapse.collapse
-          a.list-group-item(class="filter", data-filter="mix_all") All
-          a.list-group-item(class="filter", data-filter="52542545b96c0ad09e00002b") New mobs
-          a.list-group-item(class="filter", data-filter="5254256571993abd0d00005b") Gameplay
-          a.list-group-item(class="filter", data-filter="5254258bb96c0aac68000035") Cheats
-          a.list-group-item(class="filter", data-filter="5254248c73494d4c9c000033") World
-          a.list-group-item(class="filter", data-filter="525425d673494d4c9c000049") Decoration
-          a.list-group-item(class="filter", data-filter="5254260348a94512d900001f") GUI
-          a.list-group-item(class="filter", data-filter="5254268171993abd0d00007a") Sounds
-          a.list-group-item(class="filter", data-filter="525424bcb96c0a0364000020") Fixes
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="all") All
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="mobs") New mobs
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="gameplay") Gameplay
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="cheats") Cheats
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="world") World
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="decoration") Decoration
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="gui") GUI
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="sounds") Sounds
+          a.list-group-item(class="filter", data-filter-type="category", data-filter="fixes") Fixes
         a.list-group-item 
-          p.small.list-group-item-text Click above to expand
+          p.small.list-group-item-text Click above to see
+         ul#categories.list-group
+      ul#order.list-group
+        a.list-group-item.active.collapsed(data-toggle='collapse', href='#collapseOrd', data-parent='#order') Sort order
+        #collapseOrd.panel-collapse.collapse
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="date") Date (descend)
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="-date") Date (ascend)
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="vote_count") Most stars 
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="-vote_count") Fewest stars
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="downloads") Most downloads
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="-downloads") Fewest downloads
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="name") Name (descend)
+          a.list-group-item(class="filter", data-filter-type="order", data-filter="-name") Name (ascend)
+        a.list-group-item 
+          p.small.list-group-item-text Click above to see
     #main.col-md-7
       ul(id="Grid")
     #cart-content.col-md-2
