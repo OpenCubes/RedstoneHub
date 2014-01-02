@@ -220,6 +220,9 @@ aside ul li {
 aside .current {
   font-weight: bold;
 }
+.filter {
+  cursor: pointer;
+}
 #main {
   margin-top: 30px;
   margin-left: 50px;

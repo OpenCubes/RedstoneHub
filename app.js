@@ -82,7 +82,7 @@ var index = function(req, res) {
     });
 };
 // INDEX
-app.get('/:var((browse(/*)?)|upload)?', index);
+app.get('/:var((browse((/*)?))|upload)?', index);
 app.get('/view/:id', index);
 app.get('/edit/:id', index);
 // ADD MOD
@@ -192,7 +192,10 @@ app.post('/ajax/addmod/', function(req, res) {
                             'ErrorMessage': 'An exception has occured',
                             'ErrorData': err.name
                         });
-                    }
+                    }   
+                    var slug = name;
+                    slug = slug.replace(new RegExp("([^\\w\\s\\-])", "gi"), '') // Matches non alpha numeric
+                               .replace(new RegExp("\\s", "gi"), '-').toLowerCase();
                     var document = {
                         name: name,
                         summary: sum,
@@ -202,7 +205,8 @@ app.post('/ajax/addmod/', function(req, res) {
                         dl_link: dl_link,
                         creation_date: Date.now(),
                         category_id: cat._id,
-                        author: user._id
+                        author: user._id,
+                        slug: slug
                     };
                     var doc = new Mod(document);
                     doc.save(function(err, mod) {
@@ -212,7 +216,7 @@ app.post('/ajax/addmod/', function(req, res) {
                         console.log(mod);
                         res.send({
                             'Status': 'OK',
-                            'DataId': mod.id
+                            'Slug': slug
                         });
 
                     });
@@ -244,28 +248,44 @@ app.get('/ajax/getmods/', function(req, res) {
     var limit = req.param('limit');
     var skip = req.param('skip');
     var sort = req.param('sort');
-
-
-    var query = Mod.find(null);
-    query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id');
-    query.exec(function(err, doc) {
-        if (err) {
-            throw err;
-        }
-        else {
-            res.send(doc);
-        }
-    });
+    var category = req.param('category') || 'all';
+    var findMods = function(category_id) {
+        var query = Mod.find(null);
+        if (category_id) query.where('category_id', category_id);
+        query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id slug' );
+        query.exec(function(err, doc) {
+            if (err) {
+                throw err;
+            }
+            else {
+                res.send(doc);
+            }
+        });
+    }
+    if (category !== 'all') {
+        var query = Category.findOne({
+            'slug': category
+        });
+        query.exec(function(err, doc) {
+            if (err) {
+                throw err;
+            }
+            else {
+                console.log(doc);
+                findMods(doc.id);
+            }
+        });
+    }
+    else findMods();
 
 });
-
 // AJAX ROUTE FOR VIEWING MOD
 app.get('/ajax/info/', function(req, res) {
-    var id = req.param('id');
+    var slug = req.param('slug');
 
 
     var query = Mod.findOne({
-        '_id': id
+        'slug': slug
     }).populate('category_id').populate('author', 'username _id');
     query.exec(function(err, doc) {
         if (err) {

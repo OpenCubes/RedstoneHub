@@ -124,6 +124,8 @@
              throw err;
          }
      };
+     
+     var marked;
      requirejs(['jquery', 'haml', 'nprogress', 'noty', 'noty-layout', 'noty-layout-left', 'noty-theme', 'highlight', 'cookie', 'bootstrap', 'select'],
 
      function($, haml, np, not, nl, nlf, nt, hlj,  cake, bs) {
@@ -201,7 +203,8 @@
              });
          });
 
-         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup'], function(utils, sammy, shaml, browser, markdow, mixitup) {
+         requirejs(['utils', 'sammy', 'sammy.haml', 'browser', 'markdown', 'mixitup', '/app/lib/editor/marked.js'], function(utils, sammy, shaml, browser, markdow, mixitup, m) {
+             marked = m;
              $.loader = '<li id="loader">' + '<div id="spin"><img src="/images/ajax-loader.gif" /></div>' + '<div id="text">Loading...</div>' + '</li>';
              $('.filter').on('click', function(event) {
 
@@ -209,7 +212,6 @@
                  var type = $(this).attr('data-filter-type');
                  var url = $.app.getLocation();
                  
-                 console.log(event.target+';'+filter+';'+type+';'+url);
                  var newurl = $.makeURL(url, (type === 'category' ? filter : undefined), (type === 'order' ? filter : undefined));
                  $.app.setLocation(newurl);
              });
@@ -222,7 +224,7 @@
 
                  self.get(/\/browse\/(.*)/, function(context) {
                      NProgress.inc();
-
+                     console.log('browsing...');
                      // Position in db
                      $.modskip = 0, $.modlimit = 10;
                      $.scrollOffset = $.scrollOffset !== undefined ? $.scrollOffset : 0;
@@ -234,40 +236,29 @@
                      // Matcher for parser : test if url has category AND sort order
                      // Unparsed sort (/foo/bar)
                      $.sort.unparsed = '';
+                     $.sort.previousLocation = $.sort.location;
+                     $.sort.location = $.app.getLocation();
                      
-                     // /foo/bar    ==> match
-                     // /foo/-bar   ==> match
-                     // /foo        ==> don't match
-                     var regex = new RegExp("^\\w{1,}/\\-{0,1}\\w{1,}$", "gi");
-                     
-                     if(regex.test(sort)){
-                         // If there is catgeory AND sort order
-                         $.sort.category = sort.split('/')[0];
-                         $.sort.order = sort.split('/')[1];
-                     } else if(sort === '' || sort === '/') {
-                         // Then there is nothing ; sort by date
-                         $.sort.category = 'all';
-                         $.sort.order = 'date';
-                         
-                     } else {
-                         // Then there is just /foo/ (category)
-                         $.sort.category = sort.split('/')[0];
-                         $.sort.order = 'date';
-                         
-                     }
+                     $.parseURL($.app.getLocation(), function () {
+                         $('.order-filter.active').removeClass('active');
+                         $('.category-filter.active').removeClass('active');
+                         $('.order-filter[data-filter='+$.sort.order+']').addClass('active');
+                         $('.category-filter[data-filter='+$.sort.category+']').addClass('active');
+                     });
                      
                      // Remember scroll distance from top
                      $.scrollOffset = $.scrollOffset !== undefined ? $.scrollOffset : 0;
  
                      // Avoid a loading before main load
                      $.doLoad = false;
-
+                     if($.mods === undefined || $.sort.location !== $.sort.previousLocation)
+                         $.mods = undefined;
                      // Load mods from AJAX only if they were not loaded before
                      // Thus, when the usrer select a mod and go back,
                      // It does not load the mods again, but keep the previouses,
                      // And go back where the user was in a second
                      if ($.mods === undefined) {
-                         $.loadMods($.modskip, $.modlimit, $.sort.order, true, function(mods) {
+                         $.loadMods($.modskip, $.modlimit, $.sort.order, $.sort.category, true, function(mods) {
                              NProgress.inc();
                              var content = $.addMods(mods);
                              context.swap(content, function() {
@@ -312,14 +303,14 @@
 
                      }; // Load more when reached bottom
                      $(window).scroll(function() {
-                         if ($.app.getLocation() === '/browse/'+$.sort.unparsed) {
+                         if ($.regexBrowse.test($.app.getLocation())) {
                              // Write scrollTop
                              $.scrollOffset = $.scroll().scrollTop();
                          }
                          if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
 
                              // Check wether they are more mods to be loaded AND the previous load has happened after a delay
-                             if ($.doLoad === true && $.more === true && $.app.getLocation() === '/browse/'+$.sort.unparsed) {
+                             if ($.doLoad === true && $.more === true && $.regexBrowse.test($.app.getLocation()) === true) {
                                  // no new loads
                                  $.doLoad = false;
 
@@ -330,7 +321,7 @@
                                  $.modskip += 10;
 
                                  // AJAX Load
-                                $.loadMods($.modskip, $.modlimit, $.sort.order, function(mods) {
+                                $.loadMods($.modskip, $.modlimit, $.sort.order, $.sort.category, function(mods) {
                           
 
                                          // Remove all the loader
@@ -365,21 +356,21 @@
                      });
                  });
 
-                 self.get('/view/:id', function() {
+                 self.get('/view/:slug', function() {
 
                      NProgress.start();
 
 
-                     var id = this.params['id'];
+                     var slug = this.params['slug'];
                      var self = this;
                      $.ajax({
                          type: "GET",
-                         url: "/ajax/info/?id=" + id,
+                         url: "/ajax/info/?slug=" + slug,
                          error: function(err) {
                              throw err;
                          },
                          success: function(mod) {
-                             var html = markdown.toHTML(mod.description);
+                             var html = marked(mod.description);
                              NProgress.inc()
                              mod.htmldesc = html;
                              self.partial('/app/templates/mod.haml', mod, function() {

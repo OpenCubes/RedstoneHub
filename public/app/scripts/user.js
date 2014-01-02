@@ -51,15 +51,12 @@ var upload = function(context) {
                                         type: 'success',
                                         layout: 'bottomLeft'
                                     });
-                                     context.redirect('view/' + data.DataId);
+                                     context.redirect('view/' + data.Slug);
                                 }
 
                             },
                             error: function(jqXHR, textStatus, err) {
                                 alert('text status ' + textStatus + ', err ' + err);
-                                // Stop loading
-                                l.stop();
-
                             }
                         });
                     });
@@ -83,10 +80,8 @@ var deps = {
 }
 
 // STJs Loader
-var marked;
 var loadEditor = function(callback) {
-    require(['/app/lib/editor/editor.js', '/app/lib/editor/marked.js'], function(e, m) {
-        marked = m;
+    require(['/app/lib/editor/editor.js'], function(e) {
         addCss('/app/lib/editor/editor.css');
         addCss('/app/lib/editor/yue.css');
         callback();

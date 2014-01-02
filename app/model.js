@@ -39,7 +39,8 @@ var modSchema = new mongoose.Schema({
      },
      voters: [starSchema],
      vote_count: Number,
-     files: [fileSchema]
+     files: [fileSchema],
+     slug: String
 
  });
 

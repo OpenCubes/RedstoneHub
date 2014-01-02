@@ -59,14 +59,14 @@ $.renderMod = function(mod) {
     return '<li data-name="' + mod.name + '" data-version="1.6#1.5.63" class="mix ' + mod.category_id + ' mix_all">' +
     '<img  class="mod_logo" src="' + (mod.logo ? mod.logo : 'http://icons.iconarchive.com/icons/icojam/blue-bits/128/module-puzzle-icon.png') + '" />' +
     '<div class="actions btn-group-vertical">' + '<div class="download btn btn-primary" data-icon="download">Download now</div>' +
-    '<div class="cart btn btn-primary" data-id="' + mod._id + '" data-icon="cartfill">Add to cart</div>' + '</div>' +
-    '<div class="modinfo">' + '<a href="/view/' + mod._id + '" class="view" data-id="' + mod._id + '" >' +
+    '<div class="cart btn btn-primary" data-id="' + mod.slug + '" data-icon="cartfill">Add to cart</div>' + '</div>' +
+    '<div class="modinfo">' + '<a href="/view/' + mod.slug + '" class="view" data-id="' + mod.slug + '" >' +
     '<h1 class="title">' + mod.name + '</h1>' + '<h6 class="summary text">' + sum + '</h6>' + '</a>' +
-    '<div class="links">' + '<a href="/demo/' + mod._id + '" id="demo demo_' + mod._id + '" data-id="' + mod._id + '" data-icon="play">demo</a> ' +
-    '<a href="/view/' + mod._id + '" id="view view_' + mod._id + '" data-id="' + mod._id + '" data-icon="eye">view</a> ' +
-    '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
-    '<a href="/cmod/' + mod._id + '" id="cmod cmod_' + mod._id + '" data-id="' + mod._id + '" data-icon="cartfill">cart</a> ' +
-    '<a onclick="star(\''+mod._id+'\')" href="#" id="star star_' + mod._id + '" data-id="' + mod._id + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
+    '<div class="links">' + '<a href="/demo/' + mod.slug + '" id="demo demo_' + mod.slug + '" data-id="' + mod.slug + '" data-icon="play">demo</a> ' +
+    '<a href="/view/' + mod.slug + '" id="view view_' + mod.slug + '" data-id="' + mod.slug + '" data-icon="eye">view</a> ' +
+    '<a href="/cmod/' + mod.slug + '" id="cmod cmod_' + mod.slug + '" data-id="' + mod.slug + '" data-icon="cartfill">cart</a> ' +
+    '<a href="/cmod/' + mod.slug + '" id="cmod cmod_' + mod.slug + '" data-id="' + mod.slug + '" data-icon="cartfill">cart</a> ' +
+    '<a onclick="star(\''+mod.slug+'\')" href="#" id="star star_' + mod.slug + '" data-id="' + mod.slug + '" data-icon="stare">'+ (mod.vote_count ? mod.vote_count : 0)+'</a> ' + '</div>' + '</div>' + '</li>';
 };
 
 $.addMods = function(mods) {
@@ -164,15 +164,61 @@ $.makeURL = function(url, category, order) {
     console.log(newurl);
     return newurl;
 };
-// skip, limit, sort [, notify], callback
-$.loadMods = function(skip, limit, sort, notify, callback) {
+
+$.regexBrowse = new RegExp("^(/browse)(/\\w{1,})(/(\\-{0,1})\\w{1,}/{0,1})$", "gi");
+
+$.parseURL = function(url, callback) {
+    // foo/bar ==> [foo, bar]
+    var segments = url.split('/');
+    // Removes ''
+    segments.clean('');
+    
+    var newcat, neworder;
+    switch(segments.length){
+        case 0:
+            // Then url is /
+            newcat = 'all';
+            neworder = 'creation_date';
+            break;
+        case 1:
+            // Then url is browse/
+            newcat = 'all';
+            neworder = 'creation_date';
+            break;
+        case 2:
+            // Then url is bowse/catgeory
+            newcat = segments[1];
+            neworder = 'creation_date';
+            break;
+        case 3:
+            // then url is browse/category/order
+            newcat = segments[1];
+            neworder = segments[2];
+            break;
+        default:
+            console.log('WTF?');
+    }
+    $.sort.order = neworder;
+    $.sort.category = newcat;
+    if(callback)callback();
+    return;
+};
+// skip, limit, sort [, category, notify], callback
+$.loadMods = function(skip, limit, sort, category, notify, callback) {
+    // skip, limit, sort, category, callback
     if (typeof notify === "function") {
         callback = notify;
         notify = false;
     }
+    // skip, limit, sort, callback
+    if (typeof category === "function") {
+        callback = category;
+        notify = false;
+        category = 'all';
+    }
     $.ajax({
         type: "GET",
-        url: '/ajax/getmods/?sort=' + (sort || 'date') + '&limit=' + limit + '&skip=' + skip,
+        url: '/ajax/getmods/?sort=' + (sort || 'creation_date') + '&limit=' + limit + '&skip=' + skip + '&category='+category,
         error: function(err) {
             throw err;
         },
