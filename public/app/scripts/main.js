@@ -222,7 +222,7 @@
                  // Add sammy.haml
                  self.use(shaml);
 
-                 self.get(/\/browse\/(.*)/, function(context) {
+                 self.get(/\/browse(\/(.*))?/, function(context) {
                      NProgress.inc();
                      console.log('browsing...');
                      // Position in db
@@ -399,8 +399,12 @@
 
                      });
                  });
-
-
+                 self.get('/register', function(context) {
+                     require(['user', '/javascripts/motionCaptcha.js'], function(usr) {
+                         addCss('/stylesheets/motionCaptcha.css');
+                         register(context);
+                     });
+                 });
                  self.get('/edit/:id', function(context) {
                      NProgress.inc();
 

@@ -18,17 +18,17 @@ module.exports = function (schema, options) {
     options.missingUsernameError = options.missingUsernameError || 'Field %s is not set';
     options.missingPasswordError = options.missingPasswordError || 'Password argument not set!';
     options.userExistsError = options.userExistsError || 'User already exists with name %s';
-
+    options.emailField = options.emailField || 'email'
     var schemaFields = {};
     if (!schema.path(options.usernameField)) {
         schemaFields[options.usernameField] = String;
     }
     schemaFields[options.hashField] = String;
-    schemaFields[options.saltField] = String;
+    schemaFields[options.emailField] = String;
 
     schema.add(schemaFields);
 
- /*   schema.pre('save', function (next) {
+    schema.pre('save', function (next) {
         // if specified, convert the username to lowercase
         if (options.usernameLowerCase) {
             this[options.usernameField] = this[options.usernameField].toLowerCase();
@@ -36,7 +36,7 @@ module.exports = function (schema, options) {
 
         next();
     });
-*/
+
     schema.methods.setPassword = function (password, cb) {
         console.log('setting password...');
         if (!password) {

@@ -65,6 +65,116 @@ var upload = function(context) {
             });
         });
     }
+};
+var register = function(context) {
+    $.ajax({
+        url: '/shape',
+        success: function(shape) {
+
+            checkBot(context, shape, doRegister);
+        }
+    });
+};
+
+
+var checkBot = function(context, shape, callback) {
+    console.log(shape);
+    // Checks the cookie 
+    if ($.cookie('isbot') && $.cookie('isbot') === 'no') {
+        callback(context);
+    }
+    else {
+        context.partial('/app/templates/captcha.haml', {
+            shape: shape
+        }, function() {
+            $.app.trigger('load:done', {});
+            $("#submit-captcha").unbind('click').on("click", function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: '/isbot',
+                    type: 'POST',
+                    data: {
+                        _points: $._points
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        if (data.status === 'ok') {
+                            $.fn.motionCaptcha.success();
+                            setTimeout(function() {
+                                callback(context);
+                            }, 1000);
+                        }
+                        else $.fn.motionCaptcha.error();
+
+                    },
+                    error: function(jqXHR, textStatus, err) {
+                        alert('text status ' + textStatus + ', err ' + err);
+                    }
+                });
+                return false;
+            });
+
+        });
+    }
+};
+
+var doRegister = function(context) {
+
+    context.partial('/app/templates/register.haml', function() {
+        $.app.trigger('load:done', {});
+        $("#submit-register").unbind('click').on("click", function(event) {
+            event.preventDefault();
+            
+            var form = $('form').serializeObject();
+            if (form.password !== form.password2) {
+
+                noty({
+                    text: 'The passwords don\'t match' ,
+                    type: 'error',
+                    layout: 'bottomLeft'
+                });
+                return $('#password1, #password2').addClass('hasError');
+            }
+            
+            $.ajax({
+                url: '/register',
+                type: 'POST',
+                data: form,
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data)
+                    if (data.status === 'error') {
+                        if (data.type === 'bot') {
+                             noty({
+                                 text: 'It seems you are a bot. Try to clear your cookies and refresh the page',
+                                 type: 'error',
+                                 layout: 'bottomLeft'
+                             });
+                        }else
+                        noty({
+                            text: 'An error has occured.',
+                            type: 'error',
+                            layout: 'bottomLeft'
+                        })
+                    }
+                    else if (data.status === 'done') {
+                        noty({
+                            text: 'Welcome !!',
+                            type: 'success',
+                            layout: 'bottomLeft'
+                        });
+                        return context.redirect('/browse/all');
+                    }
+
+                },
+                error: function(jqXHR, textStatus, err) {
+                    alert('text status ' + textStatus + ', err ' + err);
+                }
+            });
+        });
+    });
 }
 var stjs = '/components/sir-trevor-js/';
 

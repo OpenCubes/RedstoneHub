@@ -15,10 +15,10 @@
     "mongoose": "~3.6.20",
     "async": "~0.2.9",
     "passport-local": "~0.1.6",
-    "enforce": "~0.1.2",
+    "enforce": "*",
     "json-status": "~0.2.0",
     "socket.io": "~0.9.16",
-    "enforce": "*"
+    "easy-captcha": "~0.1.5"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"

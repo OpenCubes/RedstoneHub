@@ -117,6 +117,9 @@ logout = function(event) {
 var star = function (id) {
     alert(id);
 };
+String.prototype.isNumber = function () {
+    return /^\d+$/.test(this);
+}
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
     if (this[i] == deleteValue) {         

@@ -1,0 +1,11 @@
+%form.form-horizontal
+  .form-group#captcha-group
+    %legend Are you human ? Please draw the shape to ensure that you are alive
+    #captcha
+      #mc
+        %canvas#mc-canvas
+      %input#submit-captcha.btn-primary.btn{disabled: "disabled", type: "submit", value: "I am human"}/
+    :javascript
+      (function() {
+             $('#captcha').motionCaptcha('#{shape}');
+      })();     

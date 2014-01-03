@@ -1,0 +1,43 @@
+%form.form-horizontal
+  %fieldset.col-md-8
+    / Form Name
+    %legend Create an account
+    / Text input
+    .form-group
+      %label.col-md-4.control-label{for: "username"} Username
+      .col-md-8
+        %input#username.form-control.input-md{name: "username", placeholder: "Who are you ?", required: "", type: "text"}/
+        %span.help-block Your username, case-insensitive.
+    / Text input
+    .form-group
+      %label.col-md-4.control-label{for: "email"} Email
+      .col-md-8
+        %input#email.form-control.input-md{name: "email", placeholder: "Contact me at...", required: "", type: "email"}/
+        %span.help-block Not public
+    / Password input
+    .form-group#password1
+      %label.col-md-4.control-label{for: "password"} Your password
+      .col-md-8
+        %input#password.form-control.input-md{name: "password", placeholder: "'Tis a secret !", required: "", type: "password"}/
+        %span.help-block Make it strong !
+    / Password input
+    .form-group#password2
+      %label.col-md-4.control-label{for: "password2"} Again
+      .col-md-8
+        %input#password2.form-control.input-md{name: "password2", placeholder: "Type your password again...", required: "", type: "password"}/
+        %span.help-block Just to make sure there is no typing error
+    / Text input
+    / Multiple Checkboxes
+    .form-group
+      %label.col-md-4.control-label{for: "tos"}
+      .col-md-4
+        .checkbox
+          %label{for: "tos-0"}
+            %input#tos-0{name: "tos", type: "checkbox", value: "true"}/
+            I agree the terms and agreements
+    / Button (Double)
+    .form-group
+      %label.col-md-4.control-label{for: "submit-register"}
+      .col-md-8
+        %button#submit-register.btn.btn-success{name: "submit-register"} Submit
+        %button#cancel-register.btn.btn-default{name: "cancel-register"} Cancel
