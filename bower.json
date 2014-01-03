@@ -1,10 +1,10 @@
 {
-  "name": "OpenKubes",
+  "name": "OpenCubes",
   "version": "1.0.0",
   "dependencies": {
     "jquery": "~2.0.3",
     "sammy": "*",
-    "requirejs": "~2.1.9",
+    "requirejs": "*",
     "history.js": "*",
     "EpicEditor": "~0.2.2",
     "markdown": "*",

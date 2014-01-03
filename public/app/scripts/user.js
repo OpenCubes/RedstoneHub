@@ -165,7 +165,7 @@ var doRegister = function(context) {
                             type: 'success',
                             layout: 'bottomLeft'
                         });
-                        return context.redirect('/browse/all');
+                        return context.redirect('/browse');
                     }
 
                 },
