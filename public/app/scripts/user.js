@@ -51,7 +51,7 @@ var upload = function(context) {
                                         type: 'success',
                                         layout: 'bottomLeft'
                                     });
-                                     context.redirect('view/' + data.Slug);
+                                    context.redirect('view/' + data.Slug);
                                 }
 
                             },
@@ -66,6 +66,119 @@ var upload = function(context) {
         });
     }
 };
+
+var edit = function(slug, context) {
+
+    $.ajax({
+        type: "GET",
+        url: "/ajax/info/?slug=" + slug,
+        error: function(err) {
+            throw err;
+        },
+        success: function(mod) {
+            console.log(mod);
+            mod.canedit = $.user ? ($.user.logged ? ($.user.username === mod.author.username) : false) : false;
+            console.log(mod.canedit);
+            NProgress.inc()
+            context.partial('/app/templates/edit.haml', mod, function() {
+                NProgress.inc();
+
+                $('#tabs a').click(function(e) {
+                    e.preventDefault()
+                    $(this).tab('show');
+                });
+                $.addCss('/app/lib/dynatree/skin/ui.dynatree.css');
+                var r = []
+                for (i in mod.files) {
+                    var file = mod.files[i];
+                    if (file.path) r.push({
+                        title: file.path
+                    });
+                }
+                $("#tree").dynatree({
+                    onActivate: function(node) {},
+                    persist: true,
+                    children: r
+                });
+                $('select').selectpicker();
+                $(":file").filestyle({
+                    classButton: "btn btn-primary",
+                    classInput: "form-control"
+                });
+                $(":file").change(function() {
+                    var file = this.files[0];
+                    var name = file.name;
+                    var size = file.size;
+                    var type = file.type;
+                    //Your validation
+                });
+                $('#upload-file').click(function() {
+                    $('.progress').addClass('active');
+                    require(['socketio'], function(io) {
+                        var  bandwidth = 51200;
+
+                        var socket = io.connect();
+                        if ($('#path').val() != "") {
+                            
+                            var FReader = new FileReader();
+                            var Name = $('#path').val();
+                            FReader.onload = function(evnt) {
+                                socket.emit('Upload', {
+                                    'Name': Name,
+                                    Data: evnt.target.result,
+                                    action: 'add',
+                                    path: $('#path').val(),
+                                    modid: mod._id
+                                });
+                            }
+                            socket.emit('Start', {
+                                'Name': Name,
+                                'Size': $.SelectedFile.size
+                            });
+                            socket.on('MoreData', function(data) {
+                                console.log('More...')
+                                UpdateBar(data['Percent']);
+                                var Place = data['Place'] * bandwidth ; //The Next Blocks Starting Position
+                                var NewFile; //The Variable that will hold the new Block of Data
+                                if ($.SelectedFile.webkitSlice) NewFile = $.SelectedFile.webkitSlice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
+                                else if ($.SelectedFile.slice) NewFile = $.SelectedFile.slice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
+                                else NewFile = $.SelectedFile.mozSlice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
+                                FReader.readAsBinaryString(NewFile);
+                            });
+                            socket.on('Done', function (data){
+                                $('.progress').removeClass('active')
+                                $('.progress-bar').addClass('progress-bar-success');
+                                $('.progress').animate({
+                                    width: 100 + "%"
+                                })
+                            });
+                            function UpdateBar(percent) {
+                                $('.progress-bar').animate({
+                                    width: (percent < 6 ? percent + 5 : percent) + "%"
+                                })
+                            }
+                        }
+                        else {
+                            alert("Please Select A File");
+                            $('.progress').removeClass('active');
+                        }
+
+                    });
+                });
+                $(':file').on('change', function(evnt) {
+
+                    $.SelectedFile = evnt.target.files[0];
+                    $('#path').val($.SelectedFile.name);
+                    $('.progress-bar').removeClass('progress-bar-success');
+                });
+
+                NProgress.done();
+                $.app.trigger('load:done', {});
+            });
+        }
+    });
+};
+
 var register = function(context) {
     $.ajax({
         url: '/shape',
@@ -126,18 +239,18 @@ var doRegister = function(context) {
         $.app.trigger('load:done', {});
         $("#submit-register").unbind('click').on("click", function(event) {
             event.preventDefault();
-            
+
             var form = $('form').serializeObject();
             if (form.password !== form.password2) {
 
                 noty({
-                    text: 'The passwords don\'t match' ,
+                    text: 'The passwords don\'t match',
                     type: 'error',
                     layout: 'bottomLeft'
                 });
                 return $('#password1, #password2').addClass('hasError');
             }
-            
+
             $.ajax({
                 url: '/register',
                 type: 'POST',
@@ -147,13 +260,13 @@ var doRegister = function(context) {
                     console.log(data)
                     if (data.status === 'error') {
                         if (data.type === 'bot') {
-                             noty({
-                                 text: 'It seems you are a bot. Try to clear your cookies and refresh the page',
-                                 type: 'error',
-                                 layout: 'bottomLeft'
-                             });
-                        }else
-                        noty({
+                            noty({
+                                text: 'It seems you are a bot. Try to clear your cookies and refresh the page',
+                                type: 'error',
+                                layout: 'bottomLeft'
+                            });
+                        }
+                        else noty({
                             text: 'An error has occured.',
                             type: 'error',
                             layout: 'bottomLeft'

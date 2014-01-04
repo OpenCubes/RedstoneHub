@@ -29,7 +29,7 @@
              });
              $.user = {
                  logged: true,
-                 username: data.username
+                 username: data.user.username
              };
          }
      },
@@ -241,6 +241,9 @@
              },
              success: function(mod) {
                  var html = marked(mod.description);
+                 console.log(mod);
+                 mod.canedit = $.user ? ($.user.logged ? ($.user.username === mod.author.username) : false) : false;
+                 console.log(mod.canedit);
                  NProgress.inc()
                  mod.htmldesc = html;
                  self.partial('/app/templates/mod.haml', mod, function() {
@@ -259,14 +262,8 @@
 
                      NProgress.done();
                      self.trigger('load:done', {});
-
-
-
-
                  });
              }
-
-
          });
      });
      self.get('/register', function(context) {
@@ -277,7 +274,10 @@
      });
      self.get('/edit/:id', function(context) {
          NProgress.inc();
-
+         var self = this;
+         require(['user', 'bootstrap-filestyle', 'bootstrap-progress'], function(usr, btfs) {
+             edit(self.params['id'], context);
+         })
      });
 
      self.get('/upload', function(context) {

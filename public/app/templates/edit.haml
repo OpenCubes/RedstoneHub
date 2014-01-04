@@ -1,12 +1,49 @@
-#medias
-  %h2 Manage medias
-#changelog
-  %h2 Manage changelog
-  %input{type: "text"}
-  %pre v10
-#files
-  %h2 Manage files 
-  %strong Post here classes or resources contained in your minecraft.jar
-  %input#fileupload{data-url: "/file/upload", multiple: "multiple", name: "files[]", type: "file"}/
-  #progress
-    .bar{style: "width: 0%;"}
+#tabs
+  %ul.nav.nav-tabs#tabs
+    %li.active
+      %a{href: "#desc"} Description
+    %li
+      %a{href: "#features"} Features
+    %li
+      %a{href: "#medias"} Medias
+    %li
+      %a{href: "#comments"} Comments
+    %li
+      %a{href: "#changelog"} Changelog
+    %li
+      %a{href: "#files"} Files
+  #tabs_container.tab-content
+    .desc#desc.tab-pane.active
+    .changelog.tab-pane#changelog
+      .main-cl v1.0
+    .files.tab-pane#files
+      %form.form-horizontal
+        %fieldset.col-md-12
+          / Form Name
+          %legend Upload a new file
+          / Select Basic
+          .form-group
+            %label.col-md-2.control-label{for: "version-select"} Version
+            .col-md-8
+              %select#version-select.form-control{name: "version-select"}
+                %option{value: "1"} 1.6.4#3.52.3
+                %option{value: "2"} 1.6.2#3.52.0
+                %option{value: "3"} 1.0.0#3.0.0
+          / File Button
+          .form-group
+            %label.col-md-2.control-label{for: "filebutton"} File
+            .col-md-8
+              %input#filebutton.input-file{name: "filebutton", type: "file", data-icon: "true", data-buttonText="Select a file"}/
+          / Button Drop Down
+          .form-group
+            %label.col-md-2.control-label{for: "path"} Path
+            .col-md-8
+              .input-group
+                %input#path.form-control{name: "path", placeholder: "Foo.class or textures/Bar.png", required: "", type: "text"}/
+                .input-group-btn
+                  %button.btn.btn-success#upload-file{type: "button"}
+                    Upload  
+      .col-md-10
+        .progress.progress-striped
+          .progress-bar{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => "100", role: "progressbar", style: "width: 100%;"}
+      #tree

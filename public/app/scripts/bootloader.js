@@ -3,6 +3,7 @@ requirejs.config({
     baseUrl: '../../components/',
     paths: {
         'jquery': '//code.jquery.com/jquery-1.9.1',
+        'jqueryui': '//code.jquery.com/ui/1.10.3/jquery-ui',
         'history': 'history',
         'history.js': 'history',
         'sammy': 'sammy/lib/sammy',
@@ -18,11 +19,16 @@ requirejs.config({
         'noty-layout-left': 'noty/js/noty/layouts/bottomLeft',
         'noty-theme': 'noty/js/noty/themes/default',
         'cookie': 'jquery.cookie/jquery.cookie',
-        'bootstrap': 'bootstrap/dist/js/bootstrap.min',
+        'bootstrap': '//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.0.1-p7/js/bootstrap.min',
         'user': '/app/scripts/user',
         'select': '/app/lib/select/bootstrap-select.min',
         'marked': '/app/lib/editor/marked',
-        'main': '/app/scripts/main'
+        'bootbox': '/app/lib/bootbox.min',
+        'main': '/app/scripts/main',
+        'bootstrap-filestyle': '/app/lib/bootstrap-filestyle.min',
+        'bootstrap-progress': '/app/lib/bootstrap-progressbar.min',
+        'dynatree': '/app/lib/dynatree/jquery.dynatree.min',
+        'socketio': '/socket.io/socket.io'
     },
     shim: {
         utils: ['jquery'],
@@ -44,33 +50,31 @@ requirejs.config({
         'cookie': ['jquery'],
         'bootstrap': ['jquery'],
         'select': ['jquery'],
+        'bootbox': ['bootstrap'],
+        'dynatree': ['jquery', 'jqueryui'],
         'main': {
             deps: ['haml', 'nprogress', 'noty', 'noty-layout',
                     'noty-layout-left', 'noty-theme', 'highlight',
-                    'cookie', 'bootstrap', 'select', 'utils']
+                    'cookie', 'bootstrap', 'select', 'utils', 'bootbox']
         }
     }
 
 });
 
 requirejs.onError = function(err) {
-    if (err.requireType === 'timeout') {
         // tell user
-        
-            alert('Error : load timeout. Please reload the page.');
+        var bb = bootbox || {alert: alert}
+        bb.alert('Error : see console for more infos. Please reload the page.');
         throw err;
        
-    }
-    else {
-        throw err;
-    }
 };
 var sammy, Sammy, marked;
 // First load for global var
-require(['jquery', 'sammy','sammy-haml', 'marked'], function(jquery, sm, shaml, m) {
+require(['jquery', 'sammy','sammy-haml', 'marked', 'dynatree'], function(jquery, sm, shaml, m, dt) {
     sm.Haml = shaml;
     Sammy = sammy = sm;
     marked = m;
+    console.log(dt);
     require(['main'], function() {
         
     })

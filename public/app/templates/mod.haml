@@ -20,8 +20,10 @@
         %span.info> 52
       %span.label{data-icon: "bubbles"} comments
         %span.info> 52
-#actions
-  %a#edit Edit this mod
+  - if (canedit){
+  #actions
+    %a#edit{href: "/edit/#{slug}"} Edit this mod
+  - }
 #tabs
   %ul.nav.nav-tabs#tabs
     %li.active
@@ -41,10 +43,3 @@
       .main-desc= htmldesc
     .changelog.tab-pane#changelog
       .main-cl v1.0
-    .files.tab-pane#files
-      %form{enctype: "multipart/form-data"}
-        %input#file-file{name: "file", type: "file"}/
-        %label Name :
-        %input#file-name{type: "text", name: "name"}
-        %input#submit-file{type: "button", value: "Upload"}/
-        %progress

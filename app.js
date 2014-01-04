@@ -6,8 +6,7 @@ var express = require('express'),
     routes = require('./routes'),
     user = require('./routes/user'),
     server = require('http').createServer(app),
-    io = require('socket.io') /*.listen(server)*/
-    ,
+    io = require('socket.io').listen(server),
     path = require('path'),
     config = require('./config'),
     jade = require('jade'),
@@ -25,7 +24,7 @@ var util = require('util'),
     crypto = require('crypto');
 var shasum = crypto.createHash('sha256');
 var lessMiddleware = require('less-middleware');
-var $1 = require('./dollar.js') 
+var $1 = require('./dollar.js')
 var passport = require('passport');
 
 // all environments
@@ -120,14 +119,14 @@ app.post('/register', function(req, res) {
     }
 });
 
-app.get('/shape', function(req, res){
+app.get('/shape', function(req, res) {
 
-  // sort a random shape for the captcha and save it on the session
-  var shapes = ['triangle', 'x', 'rectangle', 'circle', 'check', 'caret', 'zigzag', 'arrow', 'leftbracket', 'rightbracket', 'v', 'delete', 'star', 'pigtail'];
-  var shape = shapes[Math.floor(Math.random() * (shapes.length) )];
-  req.session.shape = shape;
+    // sort a random shape for the captcha and save it on the session
+    var shapes = ['triangle', 'x', 'rectangle', 'circle', 'check', 'caret', 'zigzag', 'arrow', 'leftbracket', 'rightbracket', 'v', 'delete', 'star', 'pigtail'];
+    var shape = shapes[Math.floor(Math.random() * (shapes.length))];
+    req.session.shape = shape;
 
-  res.send(shape);
+    res.send(shape);
 });
 app.post('/isbot', function(req, res) {
 
@@ -152,14 +151,23 @@ app.post('/isbot', function(req, res) {
     if (_points.length >= 10 && result.Score > 0.7 && result.Name == req.session.shape) { // 
         var idplain = Date.now() + Math.floor(Math.random() * 99999999) + 1;
         var d = crypto.createHash('sha256').update(idplain.toString()).digest('hex');
-        res.cookie('human-id', d, {httpOnly: false});
-        res.cookie('isbot', 'no', {httpOnly: false});
+        res.cookie('human-id', d, {
+            httpOnly: false
+        });
+        res.cookie('isbot', 'no', {
+            httpOnly: false
+        });
         humanList.push(d);
         console.log(d);
-        res.send({status: 'ok'});1
+        res.send({
+            status: 'ok'
+        });
+        1
     }
     else {
-        res.send({status: 'invalid'});
+        res.send({
+            status: 'invalid'
+        });
     }
 
 });
@@ -215,7 +223,8 @@ app.post('/ajax/addmod/', function(req, res) {
             returnAllErrors: true
         });
         checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-        /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+        /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/
+        .add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
         checks.check({
             name: name,
             sum: sum,
@@ -241,10 +250,10 @@ app.post('/ajax/addmod/', function(req, res) {
                             'ErrorMessage': 'An exception has occured',
                             'ErrorData': err.name
                         });
-                    }   
+                    }
                     var slug = name;
                     slug = slug.replace(new RegExp("([^\\w\\s\\-])", "gi"), '') // Matches non alpha numeric
-                               .replace(new RegExp("\\s", "gi"), '-').toLowerCase();
+                    .replace(new RegExp("\\s", "gi"), '-').toLowerCase();
                     var document = {
                         name: name,
                         summary: sum,
@@ -301,7 +310,7 @@ app.get('/ajax/getmods/', function(req, res) {
     var findMods = function(category_id) {
         var query = Mod.find(null);
         if (category_id) query.where('category_id', category_id);
-        query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id slug' );
+        query.limit(limit).skip(skip).sort(sort).select('name summary category_id creation_date _id slug');
         query.exec(function(err, doc) {
             if (err) {
                 throw err;
@@ -371,9 +380,10 @@ app.get('/ajax/star/', function(req, res) {
                 }
             }
             else doc.voters = [];
-            doc.voters.push({userid: userid});
-            if(!doc.vote_count)
-                doc.vote_count = 0;
+            doc.voters.push({
+                userid: userid
+            });
+            if (!doc.vote_count) doc.vote_count = 0;
             doc.vote_count++;
             doc.save(function(err) {
                 if (err) {
@@ -404,7 +414,7 @@ app.get('/ajax/files/manage/', function(req, res) {
             '_id': modid
         }).select('_id files name summary author');
         query.exec(function(err, doc) {
-            if (err) {
+            if (err || !doc) {
                 res.status.internalServerError('Issues with database');
             }
             else {
@@ -426,8 +436,19 @@ app.get('/ajax/files/manage/', function(req, res) {
                         return;
                     }
 
-                    // actions add, del, edit
+                    // actions add, del, edit, get
                     switch (action) {
+                    case 'get':
+                        console.log(doc.files)
+                        var r = []
+                        for (i in doc.files) {
+                            var file = doc.files[i];
+                            r.push({
+                                title: file.path
+                            });
+                        }
+                        res.send(r);
+                        break;
                     case 'add':
                         if (path !== '' && modid !== '') {
                             doc.files.push({
@@ -467,8 +488,11 @@ app.get('/ajax/files/manage/', function(req, res) {
 
 
 });
+var createTree = function(files) {
 
-/*
+}
+
+var Files = {}, bandwidth = 51200;
 io.sockets.on('connection', function(socket) {
     socket.on('Start', function(data) { //data contains the variables that we passed through in the html file
         var Name = data['Name'];
@@ -482,7 +506,7 @@ io.sockets.on('connection', function(socket) {
             var Stat = fs.statSync('./temp/' + Name);
             if (Stat.isFile()) {
                 Files[Name]['Downloaded'] = Stat.size;
-                Place = Stat.size / 524288;
+                Place = Stat.size / bandwidth;
             }
         }
         catch (er) {} //It's a New File
@@ -500,25 +524,33 @@ io.sockets.on('connection', function(socket) {
         });
     });
     socket.on('Upload', function(data) {
-        var Name = data['Name'];
+        var Name = data['path'];
         Files[Name]['Downloaded'] += data['Data'].length;
         Files[Name]['Data'] += data['Data'];
         if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
         {
             fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
+                if (err) return console.log(err);
+                console.log('moving...');
+                socket.emit('Done', {
+                    'Percent': 100
+                });
                 var inp = fs.createReadStream("./temp/" + Name);
                 var out = fs.createWriteStream("./public/uploads/" + Name);
-                inp.pipe(out, function() {
-                    fs.unlink("./temp/" + Name, function() { //This Deletes The Temporary File
-                        //Moving File Completed
+                inp.pipe(out);
+                inp.on('end', function(){
+                     fs.unlink("./temp/" + Name, function(err) {
+                        if (err) return console.log(err);
+                        console.log('successfully deleted /tmp/');
                     });
-                });
+                })
             });
+
         }
         else if (Files[Name]['Data'].length > 10485760) { //If the Data Buffer reaches 10MB
             fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
                 Files[Name]['Data'] = ""; //Reset The Buffer
-                var Place = Files[Name]['Downloaded'] / 524288;
+                var Place = Files[Name]['Downloaded'] / bandwidth;
                 var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
                 socket.emit('MoreData', {
                     'Place': Place,
@@ -527,7 +559,7 @@ io.sockets.on('connection', function(socket) {
             });
         }
         else {
-            var Place = Files[Name]['Downloaded'] / 524288;
+            var Place = Files[Name]['Downloaded'] / bandwidth;
             var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
             socket.emit('MoreData', {
                 'Place': Place,
@@ -536,7 +568,6 @@ io.sockets.on('connection', function(socket) {
         }
     });
 });
-*/
 
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
