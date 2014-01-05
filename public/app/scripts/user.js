@@ -115,11 +115,11 @@ var edit = function(slug, context) {
                 $('#upload-file').click(function() {
                     $('.progress').addClass('active');
                     require(['socketio'], function(io) {
-                        var  bandwidth = 51200;
+                        var bandwidth = 51200;
 
                         var socket = io.connect();
                         if ($('#path').val() != "") {
-                            
+
                             var FReader = new FileReader();
                             var Name = $('#path').val();
                             FReader.onload = function(evnt) {
@@ -138,20 +138,33 @@ var edit = function(slug, context) {
                             socket.on('MoreData', function(data) {
                                 console.log('More...')
                                 UpdateBar(data['Percent']);
-                                var Place = data['Place'] * bandwidth ; //The Next Blocks Starting Position
+                                var Place = data['Place'] * bandwidth; //The Next Blocks Starting Position
                                 var NewFile; //The Variable that will hold the new Block of Data
-                                if ($.SelectedFile.webkitSlice) NewFile = $.SelectedFile.webkitSlice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
-                                else if ($.SelectedFile.slice) NewFile = $.SelectedFile.slice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
-                                else NewFile = $.SelectedFile.mozSlice(Place, Place + Math.min(bandwidth , ($.SelectedFile.size - Place)));
+                                if ($.SelectedFile.webkitSlice) NewFile = $.SelectedFile.webkitSlice(Place, Place + Math.min(bandwidth, ($.SelectedFile.size - Place)));
+                                else if ($.SelectedFile.slice) NewFile = $.SelectedFile.slice(Place, Place + Math.min(bandwidth, ($.SelectedFile.size - Place)));
+                                else NewFile = $.SelectedFile.mozSlice(Place, Place + Math.min(bandwidth, ($.SelectedFile.size - Place)));
                                 FReader.readAsBinaryString(NewFile);
                             });
-                            socket.on('Done', function (data){
+                            socket.on('Failed', function(data) {
+                                $('.progress').removeClass('active')
+                                $('.progress-bar').addClass('progress-bar-danger');
+                                $('.progress').animate({
+                                    width: 100 + "%"
+                                });
+                                noty({
+                                    text: data.reason,
+                                    type: 'error',
+                                    layout: 'bottomLeft'
+                                });
+                            });
+                            socket.on('Done', function(data) {
                                 $('.progress').removeClass('active')
                                 $('.progress-bar').addClass('progress-bar-success');
                                 $('.progress').animate({
                                     width: 100 + "%"
                                 })
                             });
+
                             function UpdateBar(percent) {
                                 $('.progress-bar').animate({
                                     width: (percent < 6 ? percent + 5 : percent) + "%"

@@ -18,7 +18,9 @@
     "enforce": "*",
     "json-status": "~0.2.0",
     "socket.io": "~0.9.16",
-    "easy-captcha": "~0.1.5"
+    "easy-captcha": "~0.1.5",
+    "session.socket.io": "~0.1.6",
+    "connect": "~2.12.0"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"

@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 var express = require('express'),
+    connect = require('connect'),
     app = express(),
     routes = require('./routes'),
     user = require('./routes/user'),
@@ -14,14 +15,14 @@ var express = require('express'),
     status = require('json-status'),
     util = require('util'),
     fs = require('fs'),
-    captcha = require('easy-captcha'),
+    sessionStore = new connect.middleware.session.MemoryStore(),
     Mod = model.mod,
     User = model.user,
     Category = model.category,
     Stars = model.stars,
     Files = model.files;
-var util = require('util'),
-    crypto = require('crypto');
+var crypto = require('crypto'),
+    cookieParser = express.cookieParser(config.secret);
 var shasum = crypto.createHash('sha256');
 var lessMiddleware = require('less-middleware');
 var $1 = require('./dollar.js')
@@ -44,13 +45,12 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser(config.secret));
+app.use(cookieParser);
 app.use(express.session({
-    secret: config.secret
+    store: sessionStore
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/captcha.jpg', captcha.generate());
 // use static authenticate method of model in LocalStrategy
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
@@ -73,6 +73,8 @@ app.use(express.static(__dirname + '/public'));
 // Router
 app.use(app.router);
 
+var SessionSockets = require('session.socket.io'),
+    sessionSockets = new SessionSockets(io, sessionStore, express.cookieParser(config.secret));
 
 // development only
 if ('development' == app.get('env')) {
@@ -493,7 +495,9 @@ var createTree = function(files) {
 }
 
 var Files = {}, bandwidth = 51200;
-io.sockets.on('connection', function(socket) {
+
+sessionSockets.on('connection', function(err, socket, session) {
+    console.warn(session);
     socket.on('Start', function(data) { //data contains the variables that we passed through in the html file
         var Name = data['Name'];
         Files[Name] = { //Create a new Entry in The Files Variable
@@ -531,23 +535,83 @@ io.sockets.on('connection', function(socket) {
         {
             fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
                 if (err) return console.log(err);
-                console.log('moving...');
-                socket.emit('Done', {
-                    'Percent': 100
-                });
-                var inp = fs.createReadStream("./temp/" + Name);
-                var out = fs.createWriteStream("./public/uploads/" + Name);
-                inp.pipe(out);
-                inp.on('end', function(){
-                     fs.unlink("./temp/" + Name, function(err) {
-                        if (err) return console.log(err);
-                        console.log('successfully deleted /tmp/');
+
+                if (err) return console.log(err);
+                console.log('successfully deleted /tmp/');
+                var modid = data['modid'];
+                var path = Name;
+                var user = session.passport.user;
+                if (!user) {
+                    console.log('Who are you the proud lord say ?');
+                    socket.emit('Failed', {
+                        reason: 'Access Denied'
                     });
-                })
+                    return;
+                }
+                if (!modid && modid === '') return socket.emit('Failed', {
+                    reason: 'No mod selected'
+                });
+
+
+                else {
+                    var query = Mod.findOne({
+                        '_id': modid
+                    }).select('_id files name summary author');
+                    query.exec(function(err, doc) {
+                        if (err || !doc) return socket.emit('Failed', {
+                            reason: 'Issues with db'
+                        });
+                        else {
+
+                            // Check the user
+                            var query = User.findOne({
+                                'username': user
+                            }).select('_id name');
+
+                            query.exec(function(err, user) {
+
+                                // The mod's owner and the user have to be the same person
+                                if (!user._id.equals(doc.author)) {
+                                    return socket.emit('Failed', {
+                                        reason: 'You shall not pass !!!!'
+                                    });
+                                }
+
+
+                                if (path !== '' && modid !== '') {
+                                    doc.files.push({
+                                        _id: model.mongoose.Types.ObjectId(),
+                                        path: path
+                                    });
+                                    doc.save(function(err, ndoc) {
+                                        if (err) return socket.emit('Failed', {
+                                            reason: 'Can\'t save'
+                                        });
+                                        socket.emit('Done', {
+                                            'Percent': 100
+                                        });
+                                        var inp = fs.createReadStream("./temp/" + Name);
+                                        var out = fs.createWriteStream("./public/uploads/" + ndoc.files[ndoc.files.length - 1]._id);
+                                        inp.pipe(out);
+                                        inp.on('end', function() {
+                                            fs.unlink("./temp/" + Name, function(err) {});
+                                        })
+                                    });
+
+                                }
+                                else return socket.emit('Failed', {
+                                    reason: 'Something is missing...'
+                                });
+                            });
+                        }
+                    });
+                }
+
             });
 
         }
-        else if (Files[Name]['Data'].length > 10485760) { //If the Data Buffer reaches 10MB
+        else if (Files[Name]['Data'].length > 10485760) {
+            //If the Data Buffer reaches 10MB
             fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
                 Files[Name]['Data'] = ""; //Reset The Buffer
                 var Place = Files[Name]['Downloaded'] / bandwidth;
