@@ -4,4 +4,7 @@ exports.db_opt = {
     'pass': 'password'
 };
 exports.version_regex = "((\\d.){2}\\d)#\\d.\\d((\\w|-|.|_)(\\d|\\w)+)(-?(ALPHA|BETA|DEV|UNSTABLE|STABLE|alpha|beta|dev|unstable|stable))?";
-exports.secret = 'SECRET_dTOKEN';
+exports.secret = 'SECRET_TOKEN';
+
+// The max size in bytes for uploads packet using socket.io. The bigger, the faster; the smaller, the smoother.
+exports.uploadPacketSize = 51200;

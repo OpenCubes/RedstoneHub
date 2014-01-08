@@ -20,14 +20,16 @@ var express = require('express'),
     User = model.user,
     Category = model.category,
     Stars = model.stars,
-    Files = model.files;
-var crypto = require('crypto'),
-    cookieParser = express.cookieParser(config.secret);
-var shasum = crypto.createHash('sha256');
-var lessMiddleware = require('less-middleware');
-var $1 = require('./dollar.js')
-var passport = require('passport');
-
+    Files = model.files,
+    crypto = require('crypto'),
+    cookieParser = express.cookieParser(config.secret),
+    shasum = crypto.createHash('sha256'),
+    lessMiddleware = require('less-middleware'),
+    $1 = require('./dollar.js'),
+    passport = require('passport'),
+    archive = require('archiver'),
+    uuid = require('uuid');
+    zipstream = require('zipstream');
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -490,148 +492,60 @@ app.get('/ajax/files/manage/', function(req, res) {
 
 
 });
-var createTree = function(files) {
 
-}
+app.get('/pack/', function(req, res) {
+    var id = req.param('id');
+    if (!id) return res.status.badRequest('No mod selected');
+    Mod.findOne({
+        '_id': id
+    }, function(err, mod) {
+        if (!mod || err) return res.status.internalServerError('No mod');
 
-var Files = {}, bandwidth = 51200;
+        var zip = new archive('zip');
 
-sessionSockets.on('connection', function(err, socket, session) {
-    console.warn(session);
-    socket.on('Start', function(data) { //data contains the variables that we passed through in the html file
-        var Name = data['Name'];
-        Files[Name] = { //Create a new Entry in The Files Variable
-            FileSize: data['Size'],
-            Data: "",
-            Downloaded: 0
-        }
-        var Place = 0;
-        try {
-            var Stat = fs.statSync('./temp/' + Name);
-            if (Stat.isFile()) {
-                Files[Name]['Downloaded'] = Stat.size;
-                Place = Stat.size / bandwidth;
-            }
-        }
-        catch (er) {} //It's a New File
-        fs.open("./temp/" + Name, "a", 0755, function(err, fd) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                Files[Name]['Handler'] = fd; //We store the file handler so we can write to it later
-                socket.emit('MoreData', {
-                    'Place': Place,
-                    Percent: 0
-                });
-            }
+
+        zip.on('error', function(err) {
+            console.log(err);
         });
-    });
-    socket.on('Upload', function(data) {
-        var Name = data['path'];
-        Files[Name]['Downloaded'] += data['Data'].length;
-        Files[Name]['Data'] += data['Data'];
-        if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
-        {
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
-                if (err) return console.log(err);
 
-                if (err) return console.log(err);
-                console.log('successfully deleted /tmp/');
-                var modid = data['modid'];
-                var path = Name;
-                var user = session.passport.user;
-                if (!user) {
-                    console.log('Who are you the proud lord say ?');
-                    socket.emit('Failed', {
-                        reason: 'Access Denied'
-                    });
-                    return;
-                }
-                if (!modid && modid === '') return socket.emit('Failed', {
-                    reason: 'No mod selected'
+        res.set({
+            "Content-Disposition": 'attachment; filename="' + mod.slug + '.zip"'
+        });
+        zip.pipe(res);
+        // add local file
+        var i;
+        for (i in mod.files) {
+            if (mod.files[i]._id && mod.files[i].path) {
+                var path = mod.files[i].path,
+                    id = mod.files[i]._id;
+                zip.append(fs.createReadStream('./public/uploads/' + id), {
+                    name: path
                 });
-
-
-                else {
-                    var query = Mod.findOne({
-                        '_id': modid
-                    }).select('_id files name summary author');
-                    query.exec(function(err, doc) {
-                        if (err || !doc) return socket.emit('Failed', {
-                            reason: 'Issues with db'
-                        });
-                        else {
-
-                            // Check the user
-                            var query = User.findOne({
-                                'username': user
-                            }).select('_id name');
-
-                            query.exec(function(err, user) {
-
-                                // The mod's owner and the user have to be the same person
-                                if (!user._id.equals(doc.author)) {
-                                    return socket.emit('Failed', {
-                                        reason: 'You shall not pass !!!!'
-                                    });
-                                }
-
-
-                                if (path !== '' && modid !== '') {
-                                    doc.files.push({
-                                        _id: model.mongoose.Types.ObjectId(),
-                                        path: path
-                                    });
-                                    doc.save(function(err, ndoc) {
-                                        if (err) return socket.emit('Failed', {
-                                            reason: 'Can\'t save'
-                                        });
-                                        socket.emit('Done', {
-                                            'Percent': 100
-                                        });
-                                        var inp = fs.createReadStream("./temp/" + Name);
-                                        var out = fs.createWriteStream("./public/uploads/" + ndoc.files[ndoc.files.length - 1]._id);
-                                        inp.pipe(out);
-                                        inp.on('end', function() {
-                                            fs.unlink("./temp/" + Name, function(err) {});
-                                        })
-                                    });
-
-                                }
-                                else return socket.emit('Failed', {
-                                    reason: 'Something is missing...'
-                                });
-                            });
-                        }
-                    });
-                }
-
-            });
-
+                console.log('Adding file ' + id + ' to ' + path);
+            }
         }
-        else if (Files[Name]['Data'].length > 10485760) {
-            //If the Data Buffer reaches 10MB
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen) {
-                Files[Name]['Data'] = ""; //Reset The Buffer
-                var Place = Files[Name]['Downloaded'] / bandwidth;
-                var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-                socket.emit('MoreData', {
-                    'Place': Place,
-                    'Percent': Percent
-                });
-            });
-        }
-        else {
-            var Place = Files[Name]['Downloaded'] / bandwidth;
-            var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-            socket.emit('MoreData', {
-                'Place': Place,
-                'Percent': Percent
-            });
-        }
+        zip.finalize(function(err, bytes) {
+            if (err) {
+                return console.log(err);
+            }
+
+            console.log(bytes + ' total bytes');
+        });
+        // get everything as a buffer
+        //  var buffer = zip.toBuffer();
+        //var hash = crypto.createHash('sha256').update(buffer).digest('hex');
+        //    console.log(mod.slug+"="+hash);
+        // or write everything to disk
+        //  zip.writeZip( /*target file name*/ "./cache/" + hash);
+        //res.sendfile("./cache/" + hash);
+
+
     });
-});
+})
+
+
+require('./app/socket.js')(sessionSockets, config.uploadPacketSize, fs, model, Mod, User, uuid);
+
 
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));

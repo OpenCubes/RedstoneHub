@@ -58,7 +58,7 @@ $.renderMod = function(mod) {
     }
     return '<li data-name="' + mod.name + '" data-version="1.6#1.5.63" class="mix ' + mod.category_id + ' mix_all">' +
     '<img  class="mod_logo" src="' + (mod.logo ? mod.logo : 'http://icons.iconarchive.com/icons/icojam/blue-bits/128/module-puzzle-icon.png') + '" />' +
-    '<div class="actions btn-group-vertical">' + '<div class="download btn btn-primary" data-icon="download">Download now</div>' +
+    '<div class="actions btn-group-vertical">' + '<a class="download btn btn-primary" data-icon="download" target="_blank" href="/pack/?id='+mod._id+'">Download now</a>' +
     '<div class="cart btn btn-primary" data-id="' + mod.slug + '" data-icon="cartfill">Add to cart</div>' + '</div>' +
     '<div class="modinfo">' + '<a href="/view/' + mod.slug + '" class="view" data-id="' + mod.slug + '" >' +
     '<h1 class="title">' + mod.name + '</h1>' + '<h6 class="summary text">' + sum + '</h6>' + '</a>' +

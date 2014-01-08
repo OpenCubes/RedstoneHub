@@ -4,7 +4,7 @@
 bootswatch/
 temp/*
 public/uploads/*
-
+cache/*
 ### Node ###
 lib-cov
 *.seed
