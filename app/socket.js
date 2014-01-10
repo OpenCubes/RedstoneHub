@@ -39,11 +39,9 @@ module.exports = (function(socket, bandwidth, fs, model, Mod, User, uuid, callba
             Files[Name]['Data'] += data['Data'];
             if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
             {
-                console.log(Files[Name])
                 fs.write(Files[Name].Handler, Files[Name]['Data'], null, 'Binary', function(err, Writen) {
                     if (err) return console.log(err);
 
-                    if (err) return console.log(err);
                     console.log('successfully deleted /tmp/');
                     var modid = data['modid'];
                     var path = Name;

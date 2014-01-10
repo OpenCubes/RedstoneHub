@@ -64,9 +64,9 @@ var modSchema = new mongoose.Schema({
 
  User.plugin(passportLocalMongoose);
 
- exports.user = db.model('userauths', User);
- exports.mod = db.model('mods', modSchema);
- exports.stars = db.model('stars', starSchema);
- exports.category = db.model('categories', categorySchema);
- exports.files = db.model('files', categorySchema);
+ exports.user = exports.User = db.model('userauths', User);
+ exports.mod = exports.Mod = db.model('mods', modSchema);
+ exports.stars = exports.Stars = db.model('stars', starSchema);
+ exports.category = exports.Category = db.model('categories', categorySchema);
+ exports.files = exports.Files = db.model('files', categorySchema);
  exports.mongoose = mongoose;

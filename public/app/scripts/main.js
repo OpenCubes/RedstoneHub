@@ -335,7 +335,9 @@
      // Scroll to top on each route
      self.around(function(callback) {
          $.scroll().scrollTop(0);
+         $('#main').animate({'opacity': '0'});
          callback();
+         $('#main').animate({'opacity': '1'});
      });
 
  });
