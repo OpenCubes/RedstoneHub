@@ -43,6 +43,7 @@ module.exports = (function(socket, bandwidth, fs, model, Mod, User, uuid, callba
                     if (err) return console.log(err);
 
                     console.log('successfully deleted /tmp/');
+                    var version = data['version'];
                     var modid = data['modid'];
                     var path = Name;
                     var user = session.passport.user;
@@ -83,25 +84,79 @@ module.exports = (function(socket, bandwidth, fs, model, Mod, User, uuid, callba
                                     }
 
 
-                                    if (path !== '' && modid !== '') {
-                                        doc.files.push({
-                                            _id: model.mongoose.Types.ObjectId(),
-                                            path: path
-                                        });
-                                        doc.save(function(err, ndoc) {
-                                            if (err) return socket.emit('Failed', {
-                                                reason: 'Can\'t save'
-                                            });
-                                            socket.emit('Done', {
-                                                'Percent': 100
-                                            });
-                                            var inp = fs.createReadStream("./temp/" + Files[Name].UID);
-                                            var out = fs.createWriteStream("./public/uploads/" + ndoc.files[ndoc.files.length - 1]._id);
-                                            inp.pipe(out);
-                                            inp.on('end', function() {
-                                                fs.unlink("./temp/" + Files[Name].UID, function(err) {});
-                                            })
-                                        });
+                                    if (path !== '' && version !== '') {
+                                        model.Mod.findOne({
+                                            '_id': modid,
+                                            'versions.name': version
+                                        }).exec(function(err, mod) { // We try to find a matching version
+                                            if (err) throw err;
+                                            if (!mod) {
+                                                // Therer is no matching version
+                                                // We fetch the mof
+                                                model.Mod.findById(modid).exec(function(err, mod) {
+                                                    if (err) throw err;
+                                                    if (mod) {
+                                                        console.log('found mod')
+                                                        mod.versions.push({
+                                                            name: version,
+                                                            _id: model.mongoose.Types.ObjectId()
+                                                        });
+                                                        var subdoc = mod.versions[mod.versions.length - 1];
+
+                                                        console.log(subdoc)
+                                                        mod.save(function(err, mod) {
+                                                            if (err) throw err;
+                                                            console.log(mod);
+                                                            var file = new model.files({
+                                                                version: subdoc._id,
+                                                                path: path
+                                                            });
+                                                            file.save(function(err, doc) {
+                                                                if (err) return socket.emit('Failed', {
+                                                                    reason: 'Can\'t save'
+                                                                });
+                                                                socket.emit('Done', {
+                                                                    'Percent': 100
+                                                                });
+                                                                console.log('doc is');
+                                                                console.log(doc);
+                                                                var inp = fs.createReadStream("./temp/" + Files[Name].UID);
+                                                                var out = fs.createWriteStream("./public/uploads/" + doc._id);
+                                                                inp.pipe(out);
+                                                                inp.on('end', function() {
+                                                                    fs.unlink("./temp/" + Files[Name].UID, function(err) {});
+                                                                })
+                                                            });
+                                                        })
+                                                    }
+                                                })
+                                            }
+                                            else {
+                                                console.log(mod);
+                                                var file = new model.files({
+                                                    version: mod.versions[0]._id,
+                                                    path: path,
+                                                    _id: model.mongoose.Types.ObjectId()
+                                                });
+                                                file.save(function(err, doc) {
+                                                    if (err) return socket.emit('Failed', {
+                                                        reason: 'Can\'t save'
+                                                    });
+                                                    socket.emit('Done', {
+                                                        'Percent': 100
+                                                    });
+                                                    console.log('doc is');
+                                                    console.log(doc);
+                                                    var inp = fs.createReadStream("./temp/" + Files[Name].UID);
+                                                    var out = fs.createWriteStream("./public/uploads/" + doc._id);
+                                                    inp.pipe(out);
+                                                    inp.on('end', function() {
+                                                        fs.unlink("./temp/" + Files[Name].UID, function(err) {});
+                                                    })
+                                                });
+                                            }
+                                        })
+
 
                                     }
                                     else return socket.emit('Failed', {

@@ -4,11 +4,7 @@
  var db = mongoose.connect(config.db_uri, config.db_opt);
  if (!db) console.log('error while connecting');
  
- var fileSchema = new mongoose.Schema({
-     _id: Schema.Types.ObjectId,
-     path: String,
-     
- });
+
   var starSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
      userid: Schema.Types.ObjectId,
@@ -16,6 +12,7 @@
  });
  var  fileSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
+     version: Schema.Types.ObjectId,
      path: String,
      
  }); 
@@ -39,7 +36,7 @@ var modSchema = new mongoose.Schema({
      },
      voters: [starSchema],
      vote_count: Number,
-     files: [fileSchema],
+     versions: [versionSchema],
      slug: String
 
  });
@@ -48,6 +45,10 @@ var modSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
      name: String,
      slug: String
+ });
+ var versionSchema = new mongoose.Schema({
+     _id: Schema.Types.ObjectId,
+     name: String
  });
  var starSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
@@ -68,5 +69,5 @@ var modSchema = new mongoose.Schema({
  exports.mod = exports.Mod = db.model('mods', modSchema);
  exports.stars = exports.Stars = db.model('stars', starSchema);
  exports.category = exports.Category = db.model('categories', categorySchema);
- exports.files = exports.Files = db.model('files', categorySchema);
+ exports.files = exports.Files = db.model('files', fileSchema);
  exports.mongoose = mongoose;

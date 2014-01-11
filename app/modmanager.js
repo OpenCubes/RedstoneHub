@@ -1,52 +1,60 @@
-module.exports = function(model, archive) {
+module.exports = function(model, archive, fs) {
     var routes = {};
     routes.pack = function(req, res) {
 
         var id = req.param('id');
+        var v = req.param('version').replace('|', '#');
+        console.log(v);
         if (!id) return res.status.badRequest('No mod selected');
         model.Mod.findOne({
-            '_id': id
+            '_id': id,
+            'versions.name': v
         }, function(err, mod) {
             if (!mod || err) return res.status.internalServerError('No mod');
 
-            var zip = new archive('zip');
+            model.Files.find({
+                'version': mod.versions[0]._id
+            }).exec(function(err, files) {
+                console.log(files);
+                var zip = new archive('zip');
 
 
-            zip.on('error', function(err) {
-                console.log(err);
-            });
+                zip.on('error', function(err) {
+                    console.log(err);
+                });
 
-            res.set({
-                "Content-Disposition": 'attachment; filename="' + mod.slug + '.zip"'
-            });
-            zip.pipe(res);
-            // add local file
-            var i;
-            for (i in mod.files) {
-                if (mod.files[i]._id && mod.files[i].path) {
-                    var path = mod.files[i].path,
-                        id = mod.files[i]._id;
-                    zip.append(fs.createReadStream('./public/uploads/' + id), {
-                        name: path
-                    });
-                    console.log('Adding file ' + id + ' to ' + path);
+                res.set({
+                    "Content-Disposition": 'attachment; filename="' + mod.slug + '.zip"'
+                });
+                zip.pipe(res);
+                // add local file
+                var i;
+                for (i in files) {
+                    if (files[i]._id && files[i].path) {
+                        var path = files[i].path,
+                            id = files[i]._id;
+                        zip.append(fs.createReadStream('./public/uploads/' + id), {
+                            name: path
+                        });
+                        console.log('Adding file ' + id + ' to ' + path);
+                    }
                 }
-            }
-            zip.finalize(function(err, bytes) {
-                if (err) {
-                    return console.log(err);
-                }
+                zip.finalize(function(err, bytes) {
+                    if (err) {
+                        return console.log(err);
+                    }
 
-                console.log(bytes + ' total bytes');
-            });
-            // get everything as a buffer
-            //  var buffer = zip.toBuffer();
-            //var hash = crypto.createHash('sha256').update(buffer).digest('hex');
-            //    console.log(mod.slug+"="+hash);
-            // or write everything to disk
-            //  zip.writeZip( /*target file name*/ "./cache/" + hash);
-            //res.sendfile("./cache/" + hash);
+                    console.log(bytes + ' total bytes');
+                });
+                // get everything as a buffer
+                //  var buffer = zip.toBuffer();
+                //var hash = crypto.createHash('sha256').update(buffer).digest('hex');
+                //    console.log(mod.slug+"="+hash);
+                // or write everything to disk
+                //  zip.writeZip( /*target file name*/ "./cache/" + hash);
+                //res.sendfile("./cache/" + hash);
 
+            })
 
         });
     };
@@ -159,8 +167,7 @@ module.exports = function(model, archive) {
                 returnAllErrors: true
             });
             checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-            /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/
-            .add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+            /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
             checks.check({
                 name: name,
                 sum: sum,

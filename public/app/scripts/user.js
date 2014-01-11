@@ -128,7 +128,8 @@ var edit = function(slug, context) {
                                     Data: evnt.target.result,
                                     action: 'add',
                                     path: $('#path').val(),
-                                    modid: mod._id
+                                    modid: mod._id,
+                                    version: $('select').val()
                                 });
                             }
                             socket.emit('Start', {

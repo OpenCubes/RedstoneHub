@@ -31,7 +31,7 @@ var express = require('express'),
     uuid = require('uuid');
     
 // Upload/edit mods routes
-var modmanager = require('./app/modmanager.js')(model, archive),
+var modmanager = require('./app/modmanager.js')(model, archive, fs),
     // User management routes (login, logout, register...)
     usermanager = require('./app/usermanager.js')(model, $1, uuid),
     // Mod fetcher (getmods, info...)
