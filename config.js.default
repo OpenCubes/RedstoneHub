@@ -8,3 +8,5 @@ exports.secret = 'SECRET_TOKEN';
 
 // The max size in bytes for uploads packet using socket.io. The bigger, the faster; the smaller, the smoother.
 exports.uploadPacketSize = 51200;
+// This is the environnement : prod or dev. The production env is fatser, whereas the dev is suited for dev (big wonder)
+exports.env = 'dev';

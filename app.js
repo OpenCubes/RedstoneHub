@@ -74,9 +74,12 @@ app.use(lessMiddleware({
     // force true recompiles on every request... not the
     // best for production, but fine in debug while working
     // through changes
-    //force: true
+    force: config.env === 'dev'
 }));
+app.use(connect.compress());
 
+//if(config.env === 'production')
+app.use(require('express-minify')());
 app.use(express.static(__dirname + '/public'));
 // Router
 app.use(app.router);

@@ -24,7 +24,8 @@
     "zipstream": "~0.2.1",
     "adm-zip": "~0.4.3",
     "archiver": "~0.4.10",
-    "uuid": "~1.4.1"
+    "uuid": "~1.4.1",
+    "express-minify": "0.0.7"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"
