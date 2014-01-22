@@ -18,14 +18,13 @@
     "enforce": "*",
     "json-status": "~0.2.0",
     "socket.io": "~0.9.16",
-    "easy-captcha": "~0.1.5",
     "session.socket.io": "~0.1.6",
     "connect": "~2.12.0",
-    "zipstream": "~0.2.1",
-    "adm-zip": "~0.4.3",
     "archiver": "~0.4.10",
     "uuid": "~1.4.1",
-    "express-minify": "0.0.7"
+    "express-minify": "0.0.7",
+    "colors": "~0.6.2",
+    "underscore": "~1.5.2"
   },
   "devDependencies": {
     "grunt-bower-requirejs": "~0.7.1"

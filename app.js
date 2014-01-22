@@ -157,6 +157,8 @@ app.get('/ajax/star/', modmanager.star);
 app.get('/ajax/files/manage/', modmanager.managefiles);
 
 app.get('/pack/', modmanager.pack);
+app.get('/pack/cart.zip', modmanager.packcart);
+//app.get('/ajax/list', modmanager.list);
 
 
 require('./app/socket.js')(sessionSockets, config.uploadPacketSize, fs, model, Mod, User, uuid);

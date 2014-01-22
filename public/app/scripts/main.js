@@ -309,7 +309,7 @@
              $('#cartcount').html($.cart.items.length);
              $.ajax({
                  type: "GET",
-                 url: "/ajax/info/?id=" + data.mod_id,
+                 url: "/ajax/info/?slug=" + data.mod_id,
                  success: function(mod) {
                      var content = '<li class="item" data-id="' + data.mod_id + '" >' + '<div class="cartiteminfo">' + '<h4>' + mod.name + '</h4>' + '<div class="sum">' + mod.summary + '</div>' + '</div>' + '<a href="#" data-icon="info" class=".infomod" data-id="' + data.mod_id + '"></a>' + '<a href="#" data-icon="warning" class=".warningmod" data-id="' + data.mod_id + '"></a>' + '<a href="#" data-icon="trash" class=".removemod" data-id="' + data.mod_id + '" onclick="$.cart.remove(\'' + data.mod_id + '\');"></a>' + '</li>';
                      $('ul#cartitems').append(content);

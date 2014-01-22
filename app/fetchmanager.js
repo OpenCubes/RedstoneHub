@@ -47,7 +47,23 @@ module.exports = function(model) {
                     throw err;
                 }
                 else {
+                (function f(doc, i, cb) {
+                    if (i === (doc.versions.length)) {
+                        return cb(doc);
+                    }
+                    console.log(i);
+                    var v = doc.versions[i];
+                    model.Files.find({
+                        'version': v._id
+                    }).exec(function(err, files) {
+                        doc.versions[i].files = files;
+                        i++;
+                        f(doc, i++, cb);
+                    });
+                })(doc, 0, function(doc) {
+                
                     res.send(doc);
+                })
                 }
             });
 

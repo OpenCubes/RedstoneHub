@@ -12,7 +12,6 @@
  });
  var  fileSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
-     version: Schema.Types.ObjectId,
      path: String,
      
  }); 
@@ -48,7 +47,7 @@ var modSchema = new mongoose.Schema({
  });
  var versionSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,
-     name: String
+     name: String,
  });
  var starSchema = new mongoose.Schema({
      _id: Schema.Types.ObjectId,

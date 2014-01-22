@@ -1,5 +1,14 @@
 module.exports = function(model, archive, fs) {
     var routes = {};
+    var makefetcher = function(v, cb) {
+        return function() {
+           
+        }
+    }
+    routes.packcart = function(req, res) {
+        var cart = req.cookies.oc_cart;
+        console.log(cart);
+    }
     routes.pack = function(req, res) {
 
         var id = req.param('id');
@@ -167,7 +176,8 @@ module.exports = function(model, archive, fs) {
                 returnAllErrors: true
             });
             checks.add("name", enforce.notEmptyString('Name invalid')).add("name", enforce.ranges.length(2, undefined, "Name is too short")) // yes, you can have multiple validators per property
-            /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/.add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
+            /*.add("version", enforce.patterns.match(config.version_regex, undefined, 'Version is invalid'))*/
+            .add("sum", enforce.notEmptyString('Summary is invalid')).add("desc", enforce.notEmptyString('Description is invalid'));
             checks.check({
                 name: name,
                 sum: sum,
